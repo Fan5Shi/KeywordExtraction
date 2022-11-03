@@ -16,6 +16,7 @@ In
 
 ### Dataset
 
+![KeywordExtraction/pics/process_dataset.png](https://github.com/Fan5Shi/KeywordExtraction/blob/main/pics/process_dataset.png)
 
 ### Model
 
