@@ -1,9 +1,3 @@
-try:
-    %load_ext autotime
-except:
-    !pip install ipython-autotime
-    %load_ext autotime
-
 import re
 import os
 import sys
@@ -18,7 +12,7 @@ import matplotlib.pyplot as plt
 
 from collections import Counter
 from functools import reduce
-from tqdm import tqdm
+import tqdm
 
 import warnings  
 warnings.filterwarnings('ignore')
@@ -51,18 +45,18 @@ from sklearn.model_selection import RandomizedSearchCV
 from sklearn.metrics import accuracy_score, f1_score
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 
-!pip install openpyxl
+# !pip install openpyxl
 import openpyxl
 
-!pip install python-crfsuite
+# !pip install python-crfsuite
 import pycrfsuite
 
-!pip install transformers
+# !pip install transformers
 from transformers import BertTokenizerFast, BertConfig, BertForTokenClassification
 from transformers import RobertaForTokenClassification, RobertaTokenizerFast
 from transformers import AlbertForTokenClassification, AlbertTokenizerFast
 
-!pip install sentence-transformers
+# !pip install sentence-transformers
 from sentence_transformers import SentenceTransformer
 
 from torch import cuda
@@ -73,7 +67,7 @@ seed = 442
 np.random.seed(seed)
 torch.manual_seed(seed)
 
-!pip install -U spacy
+# !pip install -U spacy
 import spacy
 spacy.__version__
 
@@ -206,7 +200,7 @@ def build_gold_dict(canonical=True,
     print(f"The size of the expert terms dictionary is {len(gold_dict)}")
     return gold_dict
 
- """
+"""
 This is the class to read dataset
 
 Return value:
@@ -274,72 +268,6 @@ class datasetProcessPipeline:
             with open(self.directory_file+self.process_filename, 'rb') as f:
                 self.datasetdf = pickle.load(f)
         self.datasetdf.drop(self.datasetdf.columns[self.datasetdf.columns.str.contains('unnamed',case = False)],axis = 1, inplace = True)
-        
-    def split_sentence(self):
-        if not 'label_phrase_spacy' in list(self.datasetdf.columns):
-            print("To split the sentence, this might take few hours ... ")
-            self.datasetdf['label_phrase_spacy'] = self.datasetdf[self.col_name].map(label_phrase_spacy)
-    
-    def label_terms(self):
-        if not 'label_word_new' in list(self.datasetdf.columns):
-            self.datasetdf['label_word_new'] = self.datasetdf['label_phrase_spacy'].map(label_word)
-
-    def label_word_new_dict(self, phrases):
-        texts = phrases.split('\n')
-        categories, keys, enriched_keys = [], [], []
-        for text in texts:
-            for key, value in self.gold_dict.items():
-                matches = re.finditer(r"((?:\w+[-])*(" + key + r")(?:-\w+)*)\b(?: |\.|\,|\:|\?|\!)", text, re.MULTILINE)
-                for matchNum, match in enumerate(matches, start=1):
-                    start_idx = match.start()
-                    end_idx = match.end()
-                    enriched_key = match.group(1)
-                    key = match.group(2)
-
-                    categories.extend(value)
-                    keys.append(key)
-                    enriched_keys.append(enriched_key)
-        return categories, keys, enriched_keys
-
-    def get_enriched_dict(self):
-        if self.enrich_dict_file:
-            with open(self.directory_file+self.enrich_dict_file, "rb") as f:
-                tmp_dict = pickle.load(f)
-                
-            Categories = tmp_dict['cats'] 
-            Enriched_keys = tmp_dict['kws']
-        else:
-            print("To get enriched dict, this might take 10 hours ... ")
-            Categories, Keys, Enriched_keys = [],[],[]
-            for i in tqdm(range(len(processdf))):
-                categories, keys, enriched_keys = self.label_word_new_dict(processdf['label_phrase_spacy'].iloc[i])
-                Enriched_keys.append(enriched_keys)
-                # Keys.append(keys)
-                Categories.append(categories)
-            
-            tmp_dict = {'cats': Categories, 'kws': Enriched_keys}
-            with open(self.directory_file+f"enriched_cat_{self.dataset_source_name}.pkl", "wb") as f:
-                pickle.dump(tmp_dict, f)
-
-        enrich2cat_dict = {}
-        for i, keys in enumerate(Enriched_keys):
-            for j, key in enumerate(keys):
-                if not key in enrich2cat_dict.keys():
-                    enrich2cat_dict[key] = [Categories[i][j]]
-        self.enrich2cat_dict = enrich2cat_dict
-
-    def get_datasetdf(self, plain=True):
-        if plain:
-            return self.datasetdf
-        self.split_sentence()
-        
-        if self.acceptHyphen:
-            self.get_enriched_dict()
-            self.base_dict = self.enrich2cat_dict
-
-        self.base_dict = dict(sorted(self.base_dict.items(),key=lambda x:len(x[0]), reverse=True))
-        self.label_terms()
-        return self.datasetdf
 
     """
     This function is to split the sentence by using spacy package
@@ -392,6 +320,72 @@ class datasetProcessPipeline:
             end_text = copy.deepcopy(text[7:])
             new_texts.append(str_text+' category=\''+','.join(set(categories))+'\' values=\''+','.join(set(keys))+'\''+end_text)
         return '\n'.join(new_texts)
+    
+    def label_terms(self):
+        if not 'label_word_new' in list(self.datasetdf.columns):
+            self.datasetdf['label_word_new'] = self.datasetdf['label_phrase_spacy'].map(self.label_word)
+
+    def label_word_new_dict(self, phrases):
+        texts = phrases.split('\n')
+        categories, keys, enriched_keys = [], [], []
+        for text in texts:
+            for key, value in self.gold_dict.items():
+                matches = re.finditer(r"((?:\w+[-])*(" + key + r")(?:-\w+)*)\b(?: |\.|\,|\:|\?|\!)", text, re.MULTILINE)
+                for matchNum, match in enumerate(matches, start=1):
+                    start_idx = match.start()
+                    end_idx = match.end()
+                    enriched_key = match.group(1)
+                    key = match.group(2)
+
+                    categories.extend(value)
+                    keys.append(key)
+                    enriched_keys.append(enriched_key)
+        return categories, keys, enriched_keys
+
+    def get_enriched_dict(self):
+        if self.enrich_dict_file:
+            with open(self.directory_file+self.enrich_dict_file, "rb") as f:
+                tmp_dict = pickle.load(f)
+                
+            Categories = tmp_dict['cats']
+            Enriched_keys = tmp_dict['kws']
+        else:
+            print("To get enriched dict, this might take 10 hours ... ")
+            Categories, Keys, Enriched_keys = [],[],[]
+            for i in tqdm.tqdm(range(len(self.datasetdf))):
+                categories, keys, enriched_keys = self.label_word_new_dict(self.datasetdf['label_phrase_spacy'].iloc[i])
+                Enriched_keys.append(enriched_keys)
+                # Keys.append(keys)
+                Categories.append(categories)
+            
+            tmp_dict = {'cats': Categories, 'kws': Enriched_keys}
+            with open(self.directory_file+f"enriched_cat_{self.dataset_source_name}.pkl", "wb") as f:
+                pickle.dump(tmp_dict, f)
+
+        enrich2cat_dict = {}
+        for i, keys in enumerate(Enriched_keys):
+            for j, key in enumerate(keys):
+                if not key in enrich2cat_dict.keys():
+                    enrich2cat_dict[key] = [Categories[i][j]]
+        self.enrich2cat_dict = enrich2cat_dict
+
+    def get_datasetdf(self, plain=True):
+        if plain:
+            return self.datasetdf
+        self.split_sentence()
+        
+        if self.acceptHyphen:
+            self.get_enriched_dict()
+            self.base_dict = self.enrich2cat_dict
+
+        self.base_dict = dict(sorted(self.base_dict.items(),key=lambda x:len(x[0]), reverse=True))
+        self.label_terms()
+        return self.datasetdf
+
+    def split_sentence(self):
+        if not 'label_phrase_spacy' in list(self.datasetdf.columns):
+            print("To split the sentence, this might take few hours ... ")
+            self.datasetdf['label_phrase_spacy'] = self.datasetdf[self.col_name].map(self.label_phrase_spacy)
       
 '''
 This class is to build our specialized dataset; For the texts that are sentences-splitted and terms-labeled,
@@ -808,8 +802,6 @@ def main():
                                        datasetdf=dataset,
                                        verbose=True, 
                                        colnames=['Firmreg_id','Nb_company','Company','Sector', 'Text_block']).process()
-
-    
 
 if __name__ == "__main__":
     main()

@@ -1,0 +1,729 @@
+academic institution,academic institution.N+Cortext3:s
+academic institutions,academic institution.N+Cortext3:p
+additive manufacturing,additive manufacturing.N+Cortext3:s
+android pay,android pay.N+Cortext3:s
+android pays,android pay.N+Cortext3:p
+apple pay,apple pay.N+Cortext3:s
+apple paies,apple pay.N+Cortext3:p
+application development,application development.N+Cortext3:s
+application developments,application development.N+Cortext3:p
+applied research,applied research.N+Cortext3:s
+applied researches,applied research.N+Cortext3:p
+artificial intelligence,artificial intelligence.N+Cortext3:s
+augmented reality,augmented reality.N+Cortext3:s
+augmented realities,augmented reality.N+Cortext3:p
+autonomous vehicle,autonomous vehicle.N+Cortext3:s
+autonomous vehicles,autonomous vehicle.N+Cortext3:p
+best way,best way.N+Cortext3:s
+best ways,best way.N+Cortext3:p
+beta version,beta version.N+Cortext3:s
+beta versions,beta version.N+Cortext3:p
+big data,big data.N+Cortext3:s
+business development,business development.N+Cortext3:s
+business developments,business development.N+Cortext3:p
+business growth,business growth.N+Cortext3:s
+business growths,business growth.N+Cortext3:p
+business innovation,business innovation.N+Cortext3:s
+business innovations,business innovation.N+Cortext3:p
+business model,business model.N+Cortext3:s
+business models,business model.N+Cortext3:p
+business process,business process.N+Cortext3:s
+business processes,business process.N+Cortext3:p
+business strategy,business strategy.N+Cortext3:s
+business strategies,business strategy.N+Cortext3:p
+business unit,business unit.N+Cortext3:s
+business units,business unit.N+Cortext3:p
+carbon dioxide,carbon dioxide.N+Cortext3:s
+carbon dioxides,carbon dioxide.N+Cortext3:p
+carbon emission,carbon emission.N+Cortext3:s
+carbon emissions,carbon emission.N+Cortext3:p
+carbon footprint,carbon footprint.N+Cortext3:s
+carbon footprints,carbon footprint.N+Cortext3:p
+circular economy,circular economy.N+Cortext3:s
+circular economies,circular economy.N+Cortext3:p
+cleaner energy,cleaner energy.N+Cortext3:s
+cleaner energies,cleaner energy.N+Cortext3:p
+climate change,climate change.N+Cortext3:s
+climate changes,climate change.N+Cortext3:p
+co2 emission,co2 emission.N+Cortext3:s
+co2 emissions,co2 emission.N+Cortext3:p
+commercial laboratory,commercial laboratory.N+Cortext3:s
+commercial laboratories,commercial laboratory.N+Cortext3:p
+communication design,communication design.N+Cortext3:s
+communication designs,communication design.N+Cortext3:p
+competitive advantage,competitive advantage.N+Cortext3:s
+competitive advantages,competitive advantage.N+Cortext3:p
+comprehensive solution,comprehensive solution.N+Cortext3:s
+comprehensive solutions,comprehensive solution.N+Cortext3:p
+computer vision,computer vision.N+Cortext3:s
+computer visions,computer vision.N+Cortext3:p
+concepting phase,concepting phase.N+Cortext3:s
+concepting phases,concepting phase.N+Cortext3:p
+connected plant,connected plant.N+Cortext3:s
+connected plants,connected plant.N+Cortext3:p
+contactless bankcard,contactless bankcard.N+Cortext3:s
+contactless bankcards,contactless bankcard.N+Cortext3:p
+contactless payment,contactless payment.N+Cortext3:s
+contactless payments,contactless payment.N+Cortext3:p
+creative center,creative center.N+Cortext3:s
+creative centers,creative center.N+Cortext3:p
+creative centre,creative centre.N+Cortext3:s
+creative centres,creative centre.N+Cortext3:p
+creative process,creative process.N+Cortext3:s
+creative processes,creative process.N+Cortext3:p
+crowdfunding platform,crowdfunding platform.N+Cortext3:s
+crowdfunding platforms,crowdfunding platform.N+Cortext3:p
+customer experience,customer experience.N+Cortext3:s
+customer experiences,customer experience.N+Cortext3:p
+cutting edge,cutting edge.A+Cortext3
+cyber security,cyber security.N+Cortext3:s
+cyber securities,cyber security.N+Cortext3:p
+data controller,data controller.N+Cortext3:s
+data controllers,data controller.N+Cortext3:p
+data analytic,data analytic.N+Cortext3:s
+data analytics,data analytic.N+Cortext3:p
+data center,data center.N+Cortext3:s
+data centers,data center.N+Cortext3:p
+data centre,data centre.N+Cortext3:s
+data centres,data centre.N+Cortext3:p
+data insight,data insight.N+Cortext3:s
+data insights,data insight.N+Cortext3:p
+data protection,data protection.N+Cortext3:s
+data protections,data protection.N+Cortext3:p
+data science,data science.N+Cortext3:s
+data sciences,data science.N+Cortext3:p
+delivery data,delivery data.N+Cortext3:s
+delivery datas,delivery data.N+Cortext3:p
+design approach,design approach.N+Cortext3:s
+design approaches,design approach.N+Cortext3:p
+design concept,design concept.N+Cortext3:s
+design concepts,design concept.N+Cortext3:p
+design development,design development.N+Cortext3:s
+design developments,design development.N+Cortext3:p
+design element,design element.N+Cortext3:s
+design elements,design element.N+Cortext3:p
+design engineer,design engineer.N+Cortext3:s
+design engineers,design engineer.N+Cortext3:p
+design feature,design feature.N+Cortext3:s
+design features,design feature.N+Cortext3:p
+design idea,design idea.N+Cortext3:s
+design ideas,design idea.N+Cortext3:p
+design language,design language.N+Cortext3:s
+design languages,design language.N+Cortext3:p
+design model,design model.N+Cortext3:s
+design models,design model.N+Cortext3:p
+design option,design option.N+Cortext3:s
+design options,design option.N+Cortext3:p
+design project,design project.N+Cortext3:s
+design projects,design project.N+Cortext3:p
+design service,design service.N+Cortext3:s
+design services,design service.N+Cortext3:p
+design solution,design solution.N+Cortext3:s
+design solutions,design solution.N+Cortext3:p
+design studio,design studio.N+Cortext3:s
+design studios,design studio.N+Cortext3:p
+design team,design team.N+Cortext3:s
+design teams,design team.N+Cortext3:p
+design tool,design tool.N+Cortext3:s
+design tools,design tool.N+Cortext3:p
+design trend,design trend.N+Cortext3:s
+design trends,design trend.N+Cortext3:p
+design vision,design vision.N+Cortext3:s
+design visions,design vision.N+Cortext3:p
+design work,design work.N+Cortext3:s
+design works,design work.N+Cortext3:p
+developing technology,developing technology.N+Cortext3:s
+developing technologies,developing technology.N+Cortext3:p
+developing solution,developing solution.N+Cortext3:s
+developing solutions,developing solution.N+Cortext3:p
+development center,development center.N+Cortext3:s
+development centers,development center.N+Cortext3:p
+development centre,development centre.N+Cortext3:s
+development centres,development centre.N+Cortext3:p
+development cost,development cost.N+Cortext3:s
+development costs,development cost.N+Cortext3:p
+development cycle,development cycle.N+Cortext3:s
+development cycles,development cycle.N+Cortext3:p
+development effort,development effort.N+Cortext3:s
+development efforts,development effort.N+Cortext3:p
+development lifecycle,development lifecycle.N+Cortext3:s
+development lifecycles,development lifecycle.N+Cortext3:p
+development phase,development phase.N+Cortext3:s
+development phases,development phase.N+Cortext3:p
+development process,development process.N+Cortext3:s
+development processes,development process.N+Cortext3:p
+development program,development program.N+Cortext3:s
+development programs,development program.N+Cortext3:p
+development programme,development programme.N+Cortext3:s
+development programmes,development programme.N+Cortext3:p
+development project,development project.N+Cortext3:s
+development projects,development project.N+Cortext3:p
+development service,development service.N+Cortext3:s
+development services,development service.N+Cortext3:p
+development stage,development stage.N+Cortext3:s
+development stages,development stage.N+Cortext3:p
+development strategy,development strategy.N+Cortext3:s
+development strategies,development strategy.N+Cortext3:p
+development team,development team.N+Cortext3:s
+development teams,development team.N+Cortext3:p
+development tool,development tool.N+Cortext3:s
+development tools,development tool.N+Cortext3:p
+development work,development work.N+Cortext3:s
+development works,development work.N+Cortext3:p
+digital channel,digital channel.N+Cortext3:s
+digital channels,digital channel.N+Cortext3:p
+digital highway,digital highway.N+Cortext3:s
+digital highwaies,digital highway.N+Cortext3:p
+digital payment,digital payment.N+Cortext3:s
+digital payments,digital payment.N+Cortext3:p
+digital signing,digital signing.N+Cortext3:s
+digital signings,digital signing.N+Cortext3:p
+digital system,digital system.N+Cortext3:s
+digital systems,digital system.N+Cortext3:p
+digital technology,digital technology.N+Cortext3:s
+digital technologies,digital technology.N+Cortext3:p
+digital transformation,digital transformation.N+Cortext3:s
+digital transformations,digital transformation.N+Cortext3:p
+digital wallet,digital wallet.N+Cortext3:s
+digital wallets,digital wallet.N+Cortext3:p
+digital innovation,digital innovation.N+Cortext3:s
+digital innovations,digital innovation.N+Cortext3:p
+digital solution,digital solution.N+Cortext3:s
+digital solutions,digital solution.N+Cortext3:p
+digitalisation trend,digitalisation trend.N+Cortext3:s
+digitalisation trends,digitalisation trend.N+Cortext3:p
+digitalisation process,digitalisation process.N+Cortext3:s
+digitalisation processes,digitalisation process.N+Cortext3:p
+digitalization process,digitalization process.N+Cortext3:s
+digitalization processes,digitalization process.N+Cortext3:p
+digitalized agriculture,digitalized agriculture.N+Cortext3:s
+digitalized agricultures,digitalized agriculture.N+Cortext3:p
+digitized bank,digitized bank.N+Cortext3:s
+digitized banks,digitized bank.N+Cortext3:p
+discovery program,discovery program.N+Cortext3:s
+discovery programs,discovery program.N+Cortext3:p
+drive innovation,drive innovation.N+Cortext3:s
+drive innovations,drive innovation.N+Cortext3:p
+economic development,economic development.N+Cortext3:s
+economic developments,economic development.N+Cortext3:p
+efficient use,efficient use.N+Cortext3:s
+efficient uses,efficient use.N+Cortext3:p
+electronic service,electronic service.N+Cortext3:s
+electronic services,electronic service.N+Cortext3:p
+emerging technology,emerging technology.N+Cortext3:s
+emerging technologies,emerging technology.N+Cortext3:p
+encourage creativity,encourage creativity.N+Cortext3:s
+encourage creativities,encourage creativity.N+Cortext3:p
+energy efficiency,energy efficiency.N+Cortext3:s
+energy efficiencies,energy efficiency.N+Cortext3:p
+energy source,energy source.N+Cortext3:s
+energy sources,energy source.N+Cortext3:p
+energy storage,energy storage.N+Cortext3:s
+energy storages,energy storage.N+Cortext3:p
+energy system,energy system.N+Cortext3:s
+energy systems,energy system.N+Cortext3:p
+energy transition,energy transition.N+Cortext3:s
+energy transitions,energy transition.N+Cortext3:p
+environmental impact,environmental impact.N+Cortext3:s
+environmental impacts,environmental impact.N+Cortext3:p
+environmental protection,environmental protection.N+Cortext3:s
+environmental protections,environmental protection.N+Cortext3:p
+esg issue,esg issue.N+Cortext3:s
+esg issues,esg issue.N+Cortext3:p
+extended reality,extended reality.N+Cortext3:s
+extended realities,extended reality.N+Cortext3:p
+flagship project,flagship project.N+Cortext3:s
+flagship projects,flagship project.N+Cortext3:p
+fuel consumption,fuel consumption.N+Cortext3:s
+fuel consumptions,fuel consumption.N+Cortext3:p
+further development,further development.N+Cortext3:s
+further developments,further development.N+Cortext3:p
+global platform,global platform.N+Cortext3:s
+global platforms,global platform.N+Cortext3:p
+high quality,high quality.N+Cortext3:s
+high qualities,high quality.N+Cortext3:p
+identification technology,identification technology.N+Cortext3:s
+identification technologies,identification technology.N+Cortext3:p
+incubator programme,incubator programme.N+Cortext3:s
+incubator programmes,incubator programme.N+Cortext3:p
+industrial design,industrial design.N+Cortext3:s
+industrial designs,industrial design.N+Cortext3:p
+industry research,industry research.N+Cortext3:s
+industry researches,industry research.N+Cortext3:p
+innovation centre,innovation centre.N+Cortext3:s
+innovation centres,innovation centre.N+Cortext3:p
+innovation center,innovation center.N+Cortext3:s
+innovation centers,innovation center.N+Cortext3:p
+innovation challenge,innovation challenge.N+Cortext3:s
+innovation challenges,innovation challenge.N+Cortext3:p
+innovation ecosystem,innovation ecosystem.N+Cortext3:s
+innovation ecosystems,innovation ecosystem.N+Cortext3:p
+innovation group,innovation group.N+Cortext3:s
+innovation groups,innovation group.N+Cortext3:p
+innovation hub,innovation hub.N+Cortext3:s
+innovation hubs,innovation hub.N+Cortext3:p
+innovation management,innovation management.N+Cortext3:s
+innovation managements,innovation management.N+Cortext3:p
+innovation network,innovation network.N+Cortext3:s
+innovation networks,innovation network.N+Cortext3:p
+innovation process,innovation process.N+Cortext3:s
+innovation processes,innovation process.N+Cortext3:p
+innovation program,innovation program.N+Cortext3:s
+innovation programs,innovation program.N+Cortext3:p
+innovation programme,innovation programme.N+Cortext3:s
+innovation programmes,innovation programme.N+Cortext3:p
+innovation project,innovation project.N+Cortext3:s
+innovation projects,innovation project.N+Cortext3:p
+innovation studio,innovation studio.N+Cortext3:s
+innovation studios,innovation studio.N+Cortext3:p
+innovation team,innovation team.N+Cortext3:s
+innovation teams,innovation team.N+Cortext3:p
+innovative company,innovative company.N+Cortext3:s
+innovative companies,innovative company.N+Cortext3:p
+innovative platform,innovative platform.N+Cortext3:s
+innovative platforms,innovative platform.N+Cortext3:p
+innovative approach,innovative approach.N+Cortext3:s
+innovative approaches,innovative approach.N+Cortext3:p
+innovative company,innovative company.N+Cortext3:s
+innovative companies,innovative company.N+Cortext3:p
+innovative culture,innovative culture.N+Cortext3:s
+innovative cultures,innovative culture.N+Cortext3:p
+innovative design,innovative design.N+Cortext3:s
+innovative designs,innovative design.N+Cortext3:p
+innovative idea,innovative idea.N+Cortext3:s
+innovative ideas,innovative idea.N+Cortext3:p
+innovative product,innovative product.N+Cortext3:s
+innovative products,innovative product.N+Cortext3:p
+innovative research,innovative research.N+Cortext3:s
+innovative researches,innovative research.N+Cortext3:p
+innovative solution,innovative solution.N+Cortext3:s
+innovative solutions,innovative solution.N+Cortext3:p
+innovative technology,innovative technology.N+Cortext3:s
+innovative technologies,innovative technology.N+Cortext3:p
+innovative way,innovative way.N+Cortext3:s
+innovative ways,innovative way.N+Cortext3:p
+intellectual property,intellectual property.N+Cortext3:s
+intellectual properties,intellectual property.N+Cortext3:p
+intelligent technology,intelligent technology.N+Cortext3:s
+intelligent technologies,intelligent technology.N+Cortext3:p
+interface design,interface design.N+Cortext3:s
+interface designs,interface design.N+Cortext3:p
+internet banking,internet banking.N+Cortext3:s
+internet bankings,internet banking.N+Cortext3:p
+investment platform,investment platform.N+Cortext3:s
+investment platforms,investment platform.N+Cortext3:p
+iot application,iot application.N+Cortext3:s
+iot applications,iot application.N+Cortext3:p
+iot device,iot device.N+Cortext3:s
+iot devices,iot device.N+Cortext3:p
+iot solution,iot solution.N+Cortext3:s
+iot solutions,iot solution.N+Cortext3:p
+it system,it system.N+Cortext3:s
+it systems,it system.N+Cortext3:p
+it transformation,it transformation.N+Cortext3:s
+it transformations,it transformation.N+Cortext3:p
+life cycle,life cycle.N+Cortext3:s
+life cycles,life cycle.N+Cortext3:p
+local network,local network.N+Cortext3:s
+local networks,local network.N+Cortext3:p
+login tool,login tool.N+Cortext3:s
+login tools,login tool.N+Cortext3:p
+machine learning,machine learning.N+Cortext3:s
+machine learnings,machine learning.N+Cortext3:p
+main form,main form.N+Cortext3:s
+main forms,main form.N+Cortext3:p
+method development,method development.N+Cortext3:s
+method developments,method development.N+Cortext3:p
+mobile app,mobile app.N+Cortext3:s
+mobile apps,mobile app.N+Cortext3:p
+mobile wallet,mobile wallet.N+Cortext3:s
+mobile wallets,mobile wallet.N+Cortext3:p
+more sustainable,more sustainable.N+Cortext3:s
+more sustainables,more sustainable.N+Cortext3:p
+network design,network design.N+Cortext3:s
+network designs,network design.N+Cortext3:p
+network infrastructure,network infrastructure.N+Cortext3:s
+network infrastructures,network infrastructure.N+Cortext3:p
+new application,new application.N+Cortext3:s
+new applications,new application.N+Cortext3:p
+new banking,new banking.N+Cortext3:s
+new bankings,new banking.N+Cortext3:p
+new methodology,new methodology.N+Cortext3:s
+new methodologies,new methodology.N+Cortext3:p
+new paradigm,new paradigm.N+Cortext3:s
+new paradigms,new paradigm.N+Cortext3:p
+new practice,new practice.N+Cortext3:s
+new practices,new practice.N+Cortext3:p
+new product,new product.N+Cortext3:s
+new products,new product.N+Cortext3:p
+new regulation,new regulation.N+Cortext3:s
+new regulations,new regulation.N+Cortext3:p
+new service,new service.N+Cortext3:s
+new services,new service.N+Cortext3:p
+new solution,new solution.N+Cortext3:s
+new solutions,new solution.N+Cortext3:p
+new standard,new standard.N+Cortext3:s
+new standards,new standard.N+Cortext3:p
+new technology,new technology.N+Cortext3:s
+new technologies,new technology.N+Cortext3:p
+new approach,new approach.N+Cortext3:s
+new approaches,new approach.N+Cortext3:p
+new business,new business.N+Cortext3:s
+new businesses,new business.N+Cortext3:p
+new concept,new concept.N+Cortext3:s
+new concepts,new concept.N+Cortext3:p
+new design,new design.N+Cortext3:s
+new designs,new design.N+Cortext3:p
+new development,new development.N+Cortext3:s
+new developments,new development.N+Cortext3:p
+new generation,new generation.N+Cortext3:s
+new generations,new generation.N+Cortext3:p
+new guideline,new guideline.N+Cortext3:s
+new guidelines,new guideline.N+Cortext3:p
+new idea,new idea.N+Cortext3:s
+new ideas,new idea.N+Cortext3:p
+new innovation,new innovation.N+Cortext3:s
+new innovations,new innovation.N+Cortext3:p
+new insight,new insight.N+Cortext3:s
+new insights,new insight.N+Cortext3:p
+new level,new level.N+Cortext3:s
+new levels,new level.N+Cortext3:p
+new material,new material.N+Cortext3:s
+new materials,new material.N+Cortext3:p
+new medicine,new medicine.N+Cortext3:s
+new medicines,new medicine.N+Cortext3:p
+new model,new model.N+Cortext3:s
+new models,new model.N+Cortext3:p
+new research,new research.N+Cortext3:s
+new researches,new research.N+Cortext3:p
+new skill,new skill.N+Cortext3:s
+new skills,new skill.N+Cortext3:p
+new thing,new thing.N+Cortext3:s
+new things,new thing.N+Cortext3:p
+new treatment,new treatment.N+Cortext3:s
+new treatments,new treatment.N+Cortext3:p
+new way,new way.N+Cortext3:s
+new ways,new way.N+Cortext3:p
+next generation,next generation.N+Cortext3:s
+next generations,next generation.N+Cortext3:p
+next level,next level.N+Cortext3:s
+next levels,next level.N+Cortext3:p
+online banking,online banking.N+Cortext3:s
+online bankings,online banking.N+Cortext3:p
+open architecture,open architecture.N+Cortext3:s
+open architectures,open architecture.N+Cortext3:p
+open innovation,open innovation.N+Cortext3:s
+open innovations,open innovation.N+Cortext3:p
+open system,open system.N+Cortext3:s
+open systems,open system.N+Cortext3:p
+open collaboration,open collaboration.N+Cortext3:s
+open collaborations,open collaboration.N+Cortext3:p
+organisational change,organisational change.N+Cortext3:s
+organisational changes,organisational change.N+Cortext3:p
+organizational innovation,organizational innovation.N+Cortext3:s
+organizational innovations,organizational innovation.N+Cortext3:p
+personal data,personal data.N+Cortext3:s
+personal information,personal information.N+Cortext3:s
+personal informations,personal information.N+Cortext3:p
+pilot project,pilot project.N+Cortext3:s
+pilot projects,pilot project.N+Cortext3:p
+positive transformation,positive transformation.N+Cortext3:s
+positive transformations,positive transformation.N+Cortext3:p
+positive impact,positive impact.N+Cortext3:s
+positive impacts,positive impact.N+Cortext3:p
+product design,product design.N+Cortext3:s
+product designs,product design.N+Cortext3:p
+product development,product development.N+Cortext3:s
+product developments,product development.N+Cortext3:p
+product portfolio,product portfolio.N+Cortext3:s
+product portfolios,product portfolio.N+Cortext3:p
+product quality,product quality.N+Cortext3:s
+product qualities,product quality.N+Cortext3:p
+product solution,product solution.N+Cortext3:s
+product solutions,product solution.N+Cortext3:p
+production process,production process.N+Cortext3:s
+production processes,production process.N+Cortext3:p
+production system,production system.N+Cortext3:s
+production systems,production system.N+Cortext3:p
+production technology,production technology.N+Cortext3:s
+production technologies,production technology.N+Cortext3:p
+quantum computer,quantum computer.N+Cortext3:s
+quantum computers,quantum computer.N+Cortext3:p
+radical change,radical change.N+Cortext3:s
+radical changes,radical change.N+Cortext3:p
+regulatory technology,regulatory technology.N+Cortext3:s
+regulatory technologies,regulatory technology.N+Cortext3:p
+renewable energy,renewable energy.N+Cortext3:s
+renewable energies,renewable energy.N+Cortext3:p
+research activity,research activity.N+Cortext3:s
+research activities,research activity.N+Cortext3:p
+research area,research area.N+Cortext3:s
+research areas,research area.N+Cortext3:p
+research center,research center.N+Cortext3:s
+research centers,research center.N+Cortext3:p
+research centre,research centre.N+Cortext3:s
+research centres,research centre.N+Cortext3:p
+research collaboration,research collaboration.N+Cortext3:s
+research collaborations,research collaboration.N+Cortext3:p
+research community,research community.N+Cortext3:s
+research communities,research community.N+Cortext3:p
+research effort,research effort.N+Cortext3:s
+research efforts,research effort.N+Cortext3:p
+research expertise,research expertise.N+Cortext3:s
+research expertises,research expertise.N+Cortext3:p
+research facility,research facility.N+Cortext3:s
+research facilities,research facility.N+Cortext3:p
+research facility,research facility.N+Cortext3:s
+research facilities,research facility.N+Cortext3:p
+research field,research field.N+Cortext3:s
+research fields,research field.N+Cortext3:p
+research foundation,research foundation.N+Cortext3:s
+research foundations,research foundation.N+Cortext3:p
+research group,research group.N+Cortext3:s
+research groups,research group.N+Cortext3:p
+research institute,research institute.N+Cortext3:s
+research institutes,research institute.N+Cortext3:p
+research institution,research institution.N+Cortext3:s
+research institutions,research institution.N+Cortext3:p
+research lab,research lab.N+Cortext3:s
+research labs,research lab.N+Cortext3:p
+research laboratory,research laboratory.N+Cortext3:s
+research laboratories,research laboratory.N+Cortext3:p
+research organization,research organization.N+Cortext3:s
+research organisation,research organization.N+Cortext3:s
+research organizations,research organization.N+Cortext3:p
+research organisations,research organization.N+Cortext3:p
+research process,research process.N+Cortext3:s
+research processes,research process.N+Cortext3:p
+research program,research program.N+Cortext3:s
+research programs,research program.N+Cortext3:p
+research project,research project.N+Cortext3:s
+research projects,research project.N+Cortext3:p
+research scientist,research scientist.N+Cortext3:s
+research scientists,research scientist.N+Cortext3:p
+research study,research study.N+Cortext3:s
+research studies,research study.N+Cortext3:p
+research team,research team.N+Cortext3:s
+research teams,research team.N+Cortext3:p
+research use,research use.N+Cortext3:s
+research uses,research use.N+Cortext3:p
+research work,research work.N+Cortext3:s
+research works,research work.N+Cortext3:p
+scientific research,scientific research.N+Cortext3:s
+scientific researches,scientific research.N+Cortext3:p
+security researcher,security researcher.N+Cortext3:s
+security researchers,security researcher.N+Cortext3:p
+service innovation,service innovation.N+Cortext3:s
+service innovations,service innovation.N+Cortext3:p
+simple design,simple design.N+Cortext3:s
+simple designs,simple design.N+Cortext3:p
+social innovation,social innovation.N+Cortext3:s
+social innovations,social innovation.N+Cortext3:p
+software development,software development.N+Cortext3:s
+software developments,software development.N+Cortext3:p
+software design,software design.N+Cortext3:s
+software designs,software design.N+Cortext3:p
+software solution,software solution.N+Cortext3:s
+software solutions,software solution.N+Cortext3:p
+solution design,solution design.N+Cortext3:s
+solution designs,solution design.N+Cortext3:p
+storage solution,storage solution.N+Cortext3:s
+storage solutions,storage solution.N+Cortext3:p
+storage system,storage system.N+Cortext3:s
+storage systems,storage system.N+Cortext3:p
+strategic partnership,strategic partnership.N+Cortext3:s
+strategic partnerships,strategic partnership.N+Cortext3:p
+successful venture,successful venture.N+Cortext3:s
+successful ventures,successful venture.N+Cortext3:p
+sustainability path,sustainability path.N+Cortext3:s
+sustainability paths,sustainability path.N+Cortext3:p
+sustainable technology,sustainable technology.N+Cortext3:s
+sustainable technologies,sustainable technology.N+Cortext3:p
+sustainable development,sustainable development.N+Cortext3:s
+sustainable developments,sustainable development.N+Cortext3:p
+sustainable solution,sustainable solution.N+Cortext3:s
+sustainable solutions,sustainable solution.N+Cortext3:p
+system development,system development.N+Cortext3:s
+system developments,system development.N+Cortext3:p
+tech quarter,tech quarter.N+Cortext3:s
+tech quarters,tech quarter.N+Cortext3:p
+technological disruption,technological disruption.N+Cortext3:s
+technological disruptions,technological disruption.N+Cortext3:p
+technology platform,technology platform.N+Cortext3:s
+technology platforms,technology platform.N+Cortext3:p
+technology advancement,technology advancement.N+Cortext3:s
+technology advancements,technology advancement.N+Cortext3:p
+technology center,technology center.N+Cortext3:s
+technology centers,technology center.N+Cortext3:p
+technology development,technology development.N+Cortext3:s
+technology developments,technology development.N+Cortext3:p
+technology solution,technology solution.N+Cortext3:s
+technology solutions,technology solution.N+Cortext3:p
+threat actor,threat actor.N+Cortext3:s
+threat actors,threat actor.N+Cortext3:p
+threat group,threat group.N+Cortext3:s
+threat groups,threat group.N+Cortext3:p
+threat intelligence,threat intelligence.N+Cortext3:s
+threat intelligences,threat intelligence.N+Cortext3:p
+tumor cell,tumor cell.N+Cortext3:s
+tumor cells,tumor cell.N+Cortext3:p
+user experience,user experience.N+Cortext3:s
+user experiences,user experience.N+Cortext3:p
+user interface,user interface.N+Cortext3:s
+user interfaces,user interface.N+Cortext3:p
+validated design,validated design.N+Cortext3:s
+validated designs,validated design.N+Cortext3:p
+value chain,value chain.N+Cortext3:s
+value chains,value chain.N+Cortext3:p
+virtual banking,virtual banking.N+Cortext3:s
+virtual bankings,virtual banking.N+Cortext3:p
+virtual reality,virtual reality.N+Cortext3:s
+virtual realities,virtual reality.N+Cortext3:p
+voice technology,voice technology.N+Cortext3:s
+voice technologies,voice technology.N+Cortext3:p
+3d printing,3d printing.N+Cortext3:s
+3d printings,3d printing.N+Cortext3:p
+wind turbine,wind turbine.N+Cortext3:s
+wind turbines,wind turbine.N+Cortext3:p
+worlds first,worlds first.N+Cortext3:s
+worlds leading,worlds leading.N+Cortext3:s
+aws certified developer,aws certified developer.N+Cortext3:s
+aws certified developers,aws certified developer.N+Cortext3:p
+aws cloud computing,aws cloud computing.N+Cortext3:s
+clever e-tool,clever e-tool.N+Cortext3:s
+clever e-tools,clever e-tool.N+Cortext3:p
+client-interface innovation,client-interface innovation.N+Cortext3:s
+client-interface innovations,client-interface innovation.N+Cortext3:p
+cloud computing platform,cloud computing platform.N+Cortext3:s
+collaboration and innovation,collaboration and innovation.N+Cortext3:s
+collaboration and innovations,collaboration and innovation.N+Cortext3:p
+connected production line,connected production line.N+Cortext3:s
+connected production lines,connected production line.N+Cortext3:p
+creativity and innovation,creativity and innovation.N+Cortext3:s
+creativity and innovations,creativity and innovation.N+Cortext3:p
+culture of innovation,culture of innovation.N+Cortext3:s
+culture of innovations,culture of innovation.N+Cortext3:p
+cutting-edge technology,cutting-edge technology.N+Cortext3:s
+cutting-edge technologies,cutting-edge technology.N+Cortext3:p
+design and functionality,design and functionality.N+Cortext3:s
+design and functionalities,design and functionality.N+Cortext3:p
+development and commercialization,development and commercialization.N+Cortext3:s
+development and commercialisation,development and commercialization.N+Cortext3:s
+development and commercializations,development and commercialization.N+Cortext3:p
+development and commercialisations,development and commercialization.N+Cortext3:p
+discovery and development,discovery and development.N+Cortext3:s
+discovery and developments,discovery and development.N+Cortext3:p
+entire value chain,entire value chain.N+Cortext3:s
+entire value chains,entire value chain.N+Cortext3:p
+functionality and design,functionality and design.N+Cortext3:s
+functionality and designs,functionality and design.N+Cortext3:p
+greenhouse gas emission,greenhouse gas emission.N+Cortext3:s
+greenhouse gas emissions,greenhouse gas emission.N+Cortext3:p
+innovative work practice,innovative work practice.N+Cortext3:s
+innovative work practices,innovative work practice.N+Cortext3:p
+internet of thing,internet of thing.N+Cortext3:s
+internet of things,internet of thing.N+Cortext3:p
+internet of things,internet of things.N+Cortext3:p
+nations sustainable development,nations sustainable development.N+Cortext3:s
+nations sustainable developments,nations sustainable development.N+Cortext3:p
+new business function,new business function.N+Cortext3:s
+new business functions,new business function.N+Cortext3:p
+new business model,new business model.N+Cortext3:s
+new business models,new business model.N+Cortext3:p
+new digital capability,new digital capability.N+Cortext3:s
+new digital capabilities,new digital capability.N+Cortext3:p
+new industry standard,new industry standard.N+Cortext3:s
+new industry standards,new industry standard.N+Cortext3:p
+new marketing method,new marketing method.N+Cortext3:s
+new marketing methods,new marketing method.N+Cortext3:p
+new organisational structure,new organisational structure.N+Cortext3:s
+new organisational structures,new organisational structure.N+Cortext3:p
+new product development,new product development.N+Cortext3:s
+new product developments,new product development.N+Cortext3:p
+new service delivery,new service delivery.N+Cortext3:s
+new service deliveries,new service delivery.N+Cortext3:p
+novel organisational pattern,novel organisational pattern.N+Cortext3:s
+novel organisational patterns,novel organisational pattern.N+Cortext3:p
+open innovation challenge,open innovation challenge.N+Cortext3:s
+open innovation challenges,open innovation challenge.N+Cortext3:p
+open innovation program,open innovation program.N+Cortext3:s
+open innovation programs,open innovation program.N+Cortext3:p
+power of design,power of design.N+Cortext3:s
+power of designs,power of design.N+Cortext3:p
+product development process,product development process.N+Cortext3:s
+product development processes,product development process.N+Cortext3:p
+product development program,product development program.N+Cortext3:s
+product development programs,product development program.N+Cortext3:p
+quality of life,quality of life.N+Cortext3:s
+r&d,r&d.N+Cortext3:s
+r & d,r & d.N+Cortext3:s
+re-organize marketing,re-organize marketing.N+Cortext3:s
+research and development,research and development.N+Cortext3:s
+research and developments,research and development.N+Cortext3:p
+research and innovation,research and innovation.N+Cortext3:s
+research and innovations,research and innovation.N+Cortext3:p
+restructuring of product,restructuring of product.N+Cortext3:s
+restructuring of products,restructuring of product.N+Cortext3:p
+restructuring of service,restructuring of service.N+Cortext3:s
+restructuring of services,restructuring of service.N+Cortext3:p
+science and technology,science and technology.N+Cortext3:s
+science and technologies,science and technology.N+Cortext3:p
+service delivery innovation,service delivery innovation.N+Cortext3:s
+service delivery innovations,service delivery innovation.N+Cortext3:p
+solution design guide,solution design guide.N+Cortext3:s
+solution design guides,solution design guide.N+Cortext3:p
+supply chain innovation,supply chain innovation.N+Cortext3:s
+supply chain innovations,supply chain innovation.N+Cortext3:p
+sustainable development goal,sustainable development goal.N+Cortext3:s
+sustainable development goals,sustainable development goal.N+Cortext3:p
+test development expert,test development expert.N+Cortext3:s
+test development experts,test development expert.N+Cortext3:p
+un sustainable development,un sustainable development.N+Cortext3:s
+un sustainable developments,un sustainable development.N+Cortext3:p
+worlds leading plant,worlds leading plant.N+Cortext3:s
+worlds leading plants,worlds leading plant.N+Cortext3:p
+worldwide research center,worldwide research center.N+Cortext3:s
+worldwide research centers,worldwide research center.N+Cortext3:p
+worldwide research centre,worldwide research centre.N+Cortext3:s
+worldwide research centres,worldwide research centre.N+Cortext3:p
+center of scientific discovery,center of scientific discovery.N+Cortext3:s
+center of scientific discoveries,center of scientific discovery.N+Cortext3:p
+centre of scientific discovery,centre of scientific discovery.N+Cortext3:s
+centre of scientific discoveries,centre of scientific discovery.N+Cortext3:p
+custom development for automation,custom development for automation.N+Cortext3:s
+custom developments for automation,custom development for automation.N+Cortext3:p
+customer service among university,customer service among university.N+Cortext3:s
+customer service among universities,customer service among university.N+Cortext3:p
+development of new projects,development of new projects.N+Cortext3:s
+developments of new projects,development of new projects.N+Cortext3:p
+development of new project,development of new project.N+Cortext3:s
+development of new projects,development of new project.N+Cortext3:p
+innovative product and solution,innovative product and solution.N+Cortext3:s
+innovative products and solutions,innovative product and solution.N+Cortext3:p
+new form of innovation,new form of innovation.N+Cortext3:s
+new forms of innovation,new form of innovation.N+Cortext3:p
+new form of innovations,new form of innovations.N+Cortext3:s
+new forms of innovations,new form of innovations.N+Cortext3:p
+new project and divestment,new project and divestment.N+Cortext3:s
+new projects and divestments,new project and divestment.N+Cortext3:p
+new way of working,new way of working.N+Cortext3:s
+new ways of working,new way of working.N+Cortext3:p
+plant of the future,plant of the future.N+Cortext3:s
+plants of the future,plant of the future.N+Cortext3:p
+r&d team,r&d team.N+Cortext3:s
+r&d teams,r&d team.N+Cortext3:p
+r & d team,r & d team.N+Cortext3:s
+r & d teams,r & d team.N+Cortext3:p
+re-organize business routine,re-organize business routine.N+Cortext3:s
+re-organize business routines,re-organize business routine.N+Cortext3:p
+real-time supply management,real-time supply management.N+Cortext3:s:p
+research and industry customer,research and industry customer.N+Cortext3:s
+research and industry customers,research and industry customer.N+Cortext3:p
+restructuring of production process,restructuring of production process.N+Cortext3:s
+restructuring of production processes,restructuring of production process.N+Cortext3:p
+restructuring of worker skill,restructuring of worker skill.N+Cortext3:s
+restructuring of worker skills,restructuring of worker skill.N+Cortext3:p
+training virtual reality,training virtual reality.N+Cortext3:s
+training virtual realities,training virtual reality.N+Cortext3:p
+university and research institution,university and research institution.N+Cortext3:s
+university and research institutions,university and research institution.N+Cortext3:p
