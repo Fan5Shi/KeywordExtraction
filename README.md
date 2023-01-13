@@ -1,5 +1,19 @@
 # KeywordExtraction
 
+## Repository Structure
+
+- Data
+  - originalData
+  - intermediateData
+  - finalData
+- Models
+  - BERT
+  - RoBERT
+  - LSTM
+  - CRF
+- Pipelines
+- Experiments
+
 ## Background
 
 Keyword Extraction is one of the popular research areas in NLP. A lot of methods are applied into solve this problem, such as statistic methods, N-grams and TF-IDF, etc, or supervised learning, unsupervised learning, Graph, ranking, and so forth.
