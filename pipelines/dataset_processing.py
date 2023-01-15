@@ -1,3 +1,13 @@
+'''
+!pip install tqdm
+!pip install nltk
+!pip install torchtext
+!pip install openpyxl
+!pip install python-crfsuite
+!pip install transformers
+!pip install sentence-transformers
+!pip install -U spacy
+'''
 import re
 import os
 import sys
@@ -12,7 +22,7 @@ import matplotlib.pyplot as plt
 
 from collections import Counter
 from functools import reduce
-from tqdm import tqdm
+import tqdm
 
 import warnings  
 warnings.filterwarnings('ignore')
@@ -45,18 +55,13 @@ from sklearn.model_selection import RandomizedSearchCV
 from sklearn.metrics import accuracy_score, f1_score
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 
-# !pip install openpyxl
 import openpyxl
-
-# !pip install python-crfsuite
 import pycrfsuite
 
-# !pip install transformers
 from transformers import BertTokenizerFast, BertConfig, BertForTokenClassification
 from transformers import RobertaForTokenClassification, RobertaTokenizerFast
 from transformers import AlbertForTokenClassification, AlbertTokenizerFast
 
-# !pip install sentence-transformers
 from sentence_transformers import SentenceTransformer
 
 import torch
@@ -73,7 +78,6 @@ seed = 442
 np.random.seed(seed)
 torch.manual_seed(seed)
 
-# !pip install -U spacy
 import spacy
 spacy.__version__
 
@@ -81,10 +85,16 @@ from tkinter import Text
 from spacy.lang.en import English
 from spacy.matcher import PhraseMatcher
 import copy
-nlp = spacy.load("en_core_web_sm")
-nlp.add_pipe("sentencizer")
+# nlp = spacy.load("en_core_web_sm")
+# nlp.add_pipe("sentencizer")
 
-tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+# tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+
+# model = BertModel.from_pretrained('bert-base-uncased',
+#                                 output_hidden_states = True, # Whether the model returns all hidden-states.
+#                                 )
+# model.eval()
+# model.to(device)
 
 tag_dict = {}
 tag_dict['Sustainability preoccupations'] = 'I-sus'
@@ -204,7 +214,7 @@ class datasetProcessPipeline:
         else:
             print("To get enriched dict, this might take 10 hours ... ")
             Categories, Keys, Enriched_keys = [],[],[]
-            for i in tqdm(range(len(self.datasetdf))):
+            for i in tqdm.tqdm(range(len(self.datasetdf))):
                 categories, keys, enriched_keys = self.label_word_new_dict(self.datasetdf['label_phrase_spacy'].iloc[i])
                 Enriched_keys.append(enriched_keys)
                 # Keys.append(keys)
@@ -404,7 +414,7 @@ Parameters:
 - enrich2cat_dict: enriched terms
 '''
 class DatasetBuilder:
-    def __init__(self, dataset_source_name, filepath=None, datasetdf=None, lookahead=2, lookbehind=2, limit=True, output=None, verbose=False, fixedLength=False, numTokens=200, colnames=None, enrich2cat_dict=Nonde):
+    def __init__(self, dataset_source_name, filepath=None, datasetdf=None, lookahead=2, lookbehind=2, limit=True, output=None, verbose=False, fixedLength=False, numTokens=200, colnames=None, enrich2cat_dict=None):
         self.dataset_source_name = dataset_source_name
         self.filepath = filepath
         self.datasetdf = datasetdf
@@ -453,7 +463,7 @@ class DatasetBuilder:
             string = re.sub(r'\scategory=\'[^\']+\'\svalues=\'[^\']+\'', '', string)
             string = re.sub(r'\scategory=\'[^\']+\'', '', string)
             # print(string)
-            stringlist = re.findall("(\S+\s\S+\s<mot>[^\']+?<\/mot>)", string)
+            stringlist = re.findall(r"(\S+\s\S+\s<mot>[^\']+?<\/mot>)", string)
             # print(stringlist)
             results = []
             for l in stringlist:
@@ -778,15 +788,15 @@ class CosineSimFilter(KeywordsFilter):
                     pointer_j += 1
                     pointer_i += 1
                 else:
-                  if i == len(text)-1:
-                      index_dict[j:] = i
-                  else:
-                      tmp_j = j+1
-                      while t_text[tmp_j].startswith('##'):
-                          tmp_j += 1
-                      index_dict[j:tmp_j] = [i] * (tmp_j-j)
-                      pointer_j += tmp_j-j
-                      pointer_i += 1
+                    if i == len(text)-1:
+                        index_dict[j:] = i
+                    else:
+                        tmp_j = j+1
+                        while t_text[tmp_j].startswith('##'):
+                            tmp_j += 1
+                        index_dict[j:tmp_j] = [i] * (tmp_j-j)
+                        pointer_j += tmp_j-j
+                        pointer_i += 1
                 break
         self.index_dict[m] = index_dict
 
@@ -794,7 +804,7 @@ class CosineSimFilter(KeywordsFilter):
         super().get_datasetdf()
 
         SCORES = []
-        for i in tqdm(range(len(self.dataset))):
+        for i in tqdm.tqdm(range(len(self.dataset))):
 
             keywords = self.dataset['keywords'].iloc[i].split(',')
             text = self.dataset['tokens'].iloc[i]
@@ -905,7 +915,7 @@ class CosineSimFilter(KeywordsFilter):
         self.get_threshold()
 
 
-def DatasetTagger(datasetdf, text_col, myfilter):
+def DatasetTagger(datasetdf, text_col, myfilter, enrich2cat_dict):
     TAGS, TEXTS, KWS = [], [], []
     filtered_SCORES = myfilter.get_filtered_scores(0)
     index_dict = myfilter.index_dict
@@ -955,11 +965,11 @@ def DatasetTagger(datasetdf, text_col, myfilter):
 def main():
 
     # the parameters need to change
-    directory_file = '/content/drive/MyDrive/COURSE/Intern/'
+    directory_file = '/workspaces/KeywordExtraction/'
     dataset_source_name = 'web' # 'ap'
 
-    gold_dict = build_gold_dict(canonical=False, directory_file='/content/drive/MyDrive/COURSE/Intern/')
-    
+    gold_dict = build_gold_dict(canonical=False, directory_file=directory_file+"data/originalData/")
+
     filename = 'corpus_v3_per_company_25_04_2021.pkl'
     # filename = "AR_one_per_company_total.csv"
     saved_file = directory_file + 'data/intermediateData/'
@@ -967,7 +977,7 @@ def main():
     if dataset_source_name == 'web':
         process_filename = "data/intermediateData/processed_corpus_09_27_old.csv"
         col_name = 'Text_para'
-        enriched_dict_file = 'ddata/intermediateData/0113_enriched_cat_web.pkl'
+        enriched_dict_file = 'data/intermediateData/0113_enriched_cat_web.pkl'
         colnames = ['Firmreg_id','Nb_company','Company','Sector']
     else:
         process_filename = "data/intermediateData/processed_corpus_ap_09_27_old.csv"
@@ -1005,7 +1015,9 @@ def main():
 
     dataset.to_csv(saved_file + f"found_dataset_{dataset_source_name}_01_13.csv")
     dataset = pd.read_csv(saved_file + f"found_dataset_{dataset_source_name}_01_13.csv")
-    dataset.drop(dataset.columns[dataset.columns.str.contains('unnamed',case = False)],axis = 1, inplace = True)
+    dataset.drop(dataset.columns[dataset.columns.str.contains('unnamed',case = False)],
+    axis = 1, 
+    inplace = True)
     
     colnames.append('Text_block')
     trimmed_dataset = DatasetTrimmerBT(dataset_source_name, 
@@ -1015,16 +1027,14 @@ def main():
                                    colnames=colnames).process()
     trimmed_dataset.to_csv(saved_file + f"trimmed_dataset_{dataset_source_name}_01_13.csv")
 
-    model = BertModel.from_pretrained('bert-base-uncased',
-                                  output_hidden_states = True, # Whether the model returns all hidden-states.)
-    model.eval()
-    model.to(device)
-
     myfilter = CosineSimFilter(filepath=None, datasetdf=trimmed_dataset)
     myfilter.get_dataset()
 
-    tagged_dataset = DatasetTagger(trimmed_dataset, "tokens", myfilter)
-    tagged_dataset.to_csv(saved_file + f"tagged_dataset_{dataset_source_name}_01_13.csv")  
+    tagged_dataset = DatasetTagger(trimmed_dataset, "tokens", myfilter, enrich2cat_dict)
+
+    with open(saved_file + f"tagged_dataset_{dataset_source_name}_01_13.pkl", "wb") as f:
+        pickle.dump(tagged_dataset, f)
+    # tagged_dataset.to_csv(saved_file + f"tagged_dataset_{dataset_source_name}_01_13.csv")  
 
 if __name__ == "__main__":
     main()
