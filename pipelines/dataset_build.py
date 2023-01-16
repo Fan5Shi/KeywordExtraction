@@ -166,8 +166,12 @@ def main():
     for label in range(5):
         train_set, test_set = FinalDatasetBuilder(datasetdf_sem, kw_col='keywords', label=label)
 
-        train_set.to_pickle(saved_file + f"trainset-{label}.pkl")
-        test_set.to_pickle(saved_file + f"testset-{label}.pkl")
+        with open(saved_file + f"trainset-{label}.pkl", "wb") as f:
+            pickle.dump(train_set, f)
+        with open(saved_file + f"testset-{label}.pkl", "wb") as f:
+            pickle.dump(test_set, f)
+        # train_set.to_pickle()
+        # test_set.to_pickle(saved_file + f"testset-{label}.pkl")
         print(len(train_set), len(test_set))
 
 if __name__ == "__main__":
