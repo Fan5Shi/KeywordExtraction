@@ -264,15 +264,13 @@ def bert_processing(train_set, test_set, trainingSession):
         pred_lable_keywords['preds_cats'].extend(Preds_cats)
         pred_lable_keywords['labels'].extend(Lbs)
         pred_lable_keywords['labels_cats'].extend(Lbs_cats)
-    
-    return
 
-    with open(f"./{model_name}-label-pred-keywords-{trainingSession}.pkl", "wb") as f:
+    with open(save_file + f"{model_name}-label-pred-keywords-{trainingSession}.pkl", "wb") as f:
         pickle.dump(pred_lable_keywords, f)
 
-    resultdf.to_csv(f"./{model_name}-loss-acc-{trainingSession}.csv")
+    resultdf.to_csv(save_file + f"{model_name}-loss-acc-{trainingSession}.csv")
     
-    model.save_pretrained(f"./{model_name}-epoch{EPOCHS}-{trainingSession}")
+    model.save_pretrained(save_file + f"{model_name}-epoch{EPOCHS}-{trainingSession}")
 
 # NEW ONE newly generated words
 def lengthOfTokens(pair):
@@ -356,25 +354,27 @@ LEARNING_RATE = 1e-05
 MAX_GRAD_NORM = 10
 
 directory_file = '/workspaces/KeywordExtraction/'
-saved_file = directory_file + 'data/finalData/'
-trainingSession = 1
+data_file = directory_file + 'data/finalData/'
+save_file = directory_file + 'models/results/'
 
-with open(saved_file + f"trainset-{trainingSession}.pkl", "rb") as f:
-    train_set = pickle.load(f)
-with open(saved_file + f"testset-{trainingSession}.pkl", "rb") as f:
-    test_set = pickle.load(f)
+for trainingSession in range(1, 5):
 
-models_name = ['Bert-base-cased', 'Roberta']
-for model_name in models_name:
-    print(model_name)
-    if model_name == 'Bert-base-cased':
-        tokenizer = BertTokenizerFast.from_pretrained('bert-base-cased')
-        model = BertForTokenClassification.from_pretrained('bert-base-cased', num_labels=len(labels_to_ids2))
-    if model_name == 'Albert':
-        tokenizer = BertTokenizerFast.from_pretrained('bert-base-cased')
-        model = AlbertForTokenClassification.from_pretrained('albert-base-v1', num_labels=len(labels_to_ids2))
-    if model_name == 'Roberta':
-        tokenizer = RobertaTokenizerFast.from_pretrained('roberta-base', add_prefix_space=True)
-        model = RobertaForTokenClassification.from_pretrained('roberta-base', num_labels=len(labels_to_ids2))
+    with open(data_file + f"trainset-{trainingSession}.pkl", "rb") as f:
+        train_set = pickle.load(f)
+    with open(data_file + f"testset-{trainingSession}.pkl", "rb") as f:
+        test_set = pickle.load(f)
 
-    bert_processing(train_set, test_set, trainingSession)
+    models_name = ['Bert-base-cased', 'Roberta']
+    for model_name in models_name:
+        print(model_name)
+        if model_name == 'Bert-base-cased':
+            tokenizer = BertTokenizerFast.from_pretrained('bert-base-cased')
+            model = BertForTokenClassification.from_pretrained('bert-base-cased', num_labels=len(labels_to_ids2))
+        if model_name == 'Albert':
+            tokenizer = BertTokenizerFast.from_pretrained('bert-base-cased')
+            model = AlbertForTokenClassification.from_pretrained('albert-base-v1', num_labels=len(labels_to_ids2))
+        if model_name == 'Roberta':
+            tokenizer = RobertaTokenizerFast.from_pretrained('roberta-base', add_prefix_space=True)
+            model = RobertaForTokenClassification.from_pretrained('roberta-base', num_labels=len(labels_to_ids2))
+
+        bert_processing(train_set, test_set, trainingSession)

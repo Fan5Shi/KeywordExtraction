@@ -1,3 +1,57 @@
+import numpy as np
+import pandas as pd
+import pickle
+import time
+import codecs
+from collections import Counter
+from functools import reduce
+
+from label2id import *
+from model_training import *
+
+from sklearn.metrics import accuracy_score
+
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk import pos_tag
+nltk.download('stopwords')
+nltk.download('averaged_perceptron_tagger')
+nltk.download('punkt')
+stops = set(stopwords.words('english'))
+
+import torch
+import torchtext
+import torch.nn as nn
+import torch.nn.init
+import torch.optim as optim
+import torch.nn.functional as F
+from torch.utils.data import Dataset, DataLoader
+from torch.nn.utils.rnn import pad_sequence
+from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
+
+import scipy.stats
+import eli5
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import cross_val_predict, cross_val_score
+from sklearn.ensemble import RandomForestClassifier
+# from sklearn_crfsuite import CRF, scorers, metrics
+# from sklearn_crfsuite.metrics import flat_classification_report
+from sklearn.metrics import classification_report, make_scorer
+from sklearn.model_selection import RandomizedSearchCV
+from sklearn.metrics import accuracy_score, f1_score
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+from sklearn.preprocessing import MultiLabelBinarizer
+from allennlp.modules import ConditionalRandomField
+
+from torch import cuda
+device = 'cuda' if cuda.is_available() else 'cpu'
+print(device)
+
+seed = 442
+np.random.seed(seed)
+torch.manual_seed(seed)
+
 class Highway(nn.Module):
     """
     Highway Network.
@@ -960,7 +1014,7 @@ def validate(val_loader, model, crf_criterion, vb_decoder, ispredicting=False):
 #         print(tmaps_sorted[2])
 #         print(tmaps[char_sort_ind][word_sort_ind][2])
         tmaps_sorted = tmaps_sorted % vb_decoder.tagset_size  # actual target indices (see create_input_tensors())
-        # 顺序的问题待会儿再解决
+        
         tmaps_sorted_tmp = tmaps_sorted.data.to("cpu").numpy()
 #         print(tmaps_sorted_tmp[0])
         for j, length in enumerate((wmap_lengths_sorted - 1).tolist()):
@@ -1060,6 +1114,190 @@ def tags_to_keywords(sample, words):
                 continue
     return list(set(keywords)), key_cats
 
+
+def BiLSTM_CRF_processing():
+
+    def tokenize_example(example, max_length=300):
+        return example.split(' ')[:max_length]
+
+    def split_tags(example, max_length=300):
+        return example.split(',')[:max_length]
+
+    # for trainingSession in range(1,5):
+    train_set['tokens'] = train_set['sentence'].map(tokenize_example)
+    train_set['labels'] = train_set['word_labels'].map(split_tags)
+    test_set['tokens'] = test_set['sentence'].map(tokenize_example)
+    test_set['labels'] = test_set['word_labels'].map(split_tags)
+
+    data2 = pd.concat([train_set, test_set])
+    word_map, char_map, tag_map = create_maps(data2.tokens, data2.labels, min_word_freq,
+                                                    min_char_freq)
+    embeddings, word_map, lm_vocab_size = load_embeddings(emb_file, word_map,
+                                                                expand_vocab)
+    model = LM_LSTM_CRF(tagset_size=len(tag_map),
+                        charset_size=len(char_map),
+                        char_emb_dim=char_emb_dim,
+                        char_rnn_dim=char_rnn_dim,
+                        char_rnn_layers=char_rnn_layers,
+                        vocab_size=len(word_map),
+                        lm_vocab_size=lm_vocab_size,
+                        word_emb_dim=word_emb_dim,
+                        word_rnn_dim=word_rnn_dim,
+                        word_rnn_layers=word_rnn_layers,
+                        dropout=dropout,
+                        highway_layers=highway_layers).to(device)
+    model.init_word_embeddings(embeddings.to(device))  # initialize embedding layer with pre-trained embeddings
+    model.fine_tune_word_embeddings(fine_tune_word_embeddings)  # fine-tune
+    optimizer = optim.SGD(params=filter(lambda p: p.requires_grad, model.parameters()), lr=lr, momentum=momentum)
+
+    # Loss functions
+    lm_criterion = nn.CrossEntropyLoss().to(device)
+    crf_criterion = ViterbiLoss(tag_map).to(device)
+
+    # Since the language model's vocab is restricted to in-corpus indices, encode training/val with only these!
+    # word_map might have been expanded, and in-corpus words eliminated due to low frequency might still be added because
+    # they were in the pre-trained embeddings
+    temp_word_map = {k: v for k, v in word_map.items() if v <= word_map['<unk>']}
+    train_inputs = create_input_tensors(train_set.tokens, train_set.labels, temp_word_map, char_map,
+                                        tag_map)
+    val_inputs = create_input_tensors(test_set.tokens, test_set.labels, temp_word_map, char_map, tag_map)
+
+    # DataLoaders
+    train_loader = torch.utils.data.DataLoader(WCDataset(*train_inputs), batch_size=batch_size, shuffle=True,
+                                            num_workers=workers, pin_memory=False)
+    val_loader = torch.utils.data.DataLoader(WCDataset(*val_inputs), batch_size=batch_size, shuffle=False,
+                                            num_workers=workers, pin_memory=False)
+
+    # Viterbi decoder (to find accuracy during validation)
+    vb_decoder = ViterbiDecoder(tag_map)
+
+    word_reflect_map = {v:k for k,v in word_map.items()}
+    tag_to_cat = {v:k for k, v in tag_map.items()}
+
+    print(f"{model_name} starts: ")
+    for epoch in range(start_epoch, epochs):
+
+        # One epoch's training
+        train(train_loader=train_loader,
+            model=model,
+            lm_criterion=lm_criterion,
+            crf_criterion=crf_criterion,
+            optimizer=optimizer,
+            epoch=epoch,
+            vb_decoder=vb_decoder)
+
+        # One epoch's validation
+        val_f1, _, _, _, _ = validate(val_loader=val_loader,
+                                    model=model,
+                                    crf_criterion=crf_criterion,
+                                    vb_decoder=vb_decoder,
+                                    ispredicting=True)
+
+        # Did validation F1 score improve?
+        is_best = val_f1 > best_f1
+        best_f1 = max(val_f1, best_f1)
+        if not is_best:
+            epochs_since_improvement += 1
+            print("\nEpochs since improvement: %d\n" % (epochs_since_improvement,))
+        else:
+            epochs_since_improvement = 0
+            
+        # Decay learning rate every epoch
+        adjust_learning_rate(optimizer, lr / (1 + (epoch + 1) * lr_decay))
+        
+    tag_to_cat = {v:k for k, v in tag_map.items()}
+    _, Preds, Preds_cats, Lbs, Lbs_cats = validate(val_loader=val_loader, 
+                                                model=model,
+                                                crf_criterion=crf_criterion,
+                                                vb_decoder=vb_decoder)
+
+    pred_lable_keywords = {}
+    pred_lable_keywords['predicitons'] = Preds
+    pred_lable_keywords['preds_cats'] = Preds_cats
+    pred_lable_keywords['labels'] = Lbs
+    pred_lable_keywords['labels_cats'] = Lbs_cats
+
+    with open(f"./{model_name}-label-pred-keywords-{trainingSession}.pkl", "wb") as f:
+        pickle.dump(pred_lable_keywords, f)
+
+    torch.save(model, f"./{model_name}-model-{trainingSession}.pt")
+
+    del model
+
+# NEW ONE newly generated words
+def lengthOfTokens(pair):
+        return len(pair.split())
+
+def tags_to_keywords(sample, words):
+    indices = [i for i, l in enumerate(sample) if l != 'O']
+    keywords, key_cats = [], []
+    for j, id in enumerate(indices):
+        if j == 0:
+            start = end = id
+            continue
+        if j == len(indices):
+            pos = pos_tag(words[start:end+1])
+            if (pos[-1][1] == 'NN' or pos[-1][1] == 'NNS' or pos[-1][1] == 'NNP' or pos[-1][1] == 'NNPS') and pos[0][1] != 'CC':
+                keywords.append(' '.join(words[start:end+1]))
+                key_cats.append((' '.join(words[start:end+1]), sample[start:end+1]))
+            continue
+        if end+1 == id:
+            end = id
+        else:
+            pos = pos_tag(words[start:end+1])
+            if (pos[-1][1] == 'NN' or pos[-1][1] == 'NNS' or pos[-1][1] == 'NNP' or pos[-1][1] == 'NNPS') and pos[0][1] != 'CC':
+                keywords.append(' '.join(words[start:end+1]))
+                key_cats.append((' '.join(words[start:end+1]), sample[start:end+1]))
+            start = end = id
+    return list(set(keywords)), key_cats
+
+def countKeywords(test_dataset, model):
+    kws_pairs = []
+    Preds, Preds_cats, Lbs, Lbs_cats = [], [], [], []
+    for tmp_num in range(len(test_dataset)):
+        sentence = test_dataset["sentence"].iloc[tmp_num]
+
+        inputs = tokenizer(sentence.split(),
+                            is_split_into_words=True, 
+                            return_offsets_mapping=True, 
+                            padding='max_length', 
+                            truncation=True, 
+                            max_length=MAX_LEN,
+                            return_tensors="pt")
+
+        # move to gpu
+        ids = inputs["input_ids"].to(device)
+        mask = inputs["attention_mask"].to(device)
+        # forward pass
+        outputs = model(ids, attention_mask=mask)
+        logits = outputs.logits
+
+        active_logits = logits.view(-1, model.num_labels) # shape (batch_size * seq_len, num_labels)
+        flattened_predictions = torch.argmax(active_logits, axis=1) # shape (batch_size*seq_len,) - predictions at the token level
+
+        tokens = tokenizer.convert_ids_to_tokens(ids.squeeze().tolist())
+        token_predictions = [ids_to_labels2[i] for i in flattened_predictions.cpu().numpy()]
+        wp_preds = list(zip(tokens, token_predictions)) # list of tuples. Each tuple = (wordpiece, prediction)
+
+        prediction = []
+        for token_pred, mapping in zip(wp_preds, inputs["offset_mapping"].squeeze().tolist()):
+          #only predictions on first word pieces are important
+          if mapping[0] == 0 and mapping[1] != 0:
+            prediction.append(token_pred[1])
+          else:
+            continue
+        
+        # predictions
+        preds, preds_cats = tags_to_keywords(prediction, sentence.split())
+        lbs, lbs_cats = tags_to_keywords(test_dataset["word_labels"].iloc[tmp_num].split(','), sentence.split())
+
+        Preds.append(preds)
+        Preds_cats.append(preds_cats)
+        Lbs.append(lbs)
+        Lbs_cats.append(lbs_cats)
+        
+    return Preds, Preds_cats, Lbs, Lbs_cats
+
 # trainingSession = 1
 model_name = 'BiLSTM-CRF'
 emb_file = '../input/glove6b100dtxt/glove.6B.100d.txt'
@@ -1093,109 +1331,6 @@ print_freq = 100  # print training or validation status every __ batches
 best_f1 = 0.  # F1 score to start with
 checkpoint = None  # path to model checkpoint, None if none
 
-def tokenize_example(example, max_length=300):
-    return example.split(' ')[:max_length]
 
-def split_tags(example, max_length=300):
-    return example.split(',')[:max_length]
 
-# for trainingSession in range(1,5):
-train_set['tokens'] = train_set['sentence'].map(tokenize_example)
-train_set['labels'] = train_set['word_labels'].map(split_tags)
-test_set['tokens'] = test_set['sentence'].map(tokenize_example)
-test_set['labels'] = test_set['word_labels'].map(split_tags)
-
-data2 = pd.concat([train_set, test_set])
-word_map, char_map, tag_map = create_maps(data2.tokens, data2.labels, min_word_freq,
-                                                  min_char_freq)
-embeddings, word_map, lm_vocab_size = load_embeddings(emb_file, word_map,
-                                                              expand_vocab)
-model = LM_LSTM_CRF(tagset_size=len(tag_map),
-                    charset_size=len(char_map),
-                    char_emb_dim=char_emb_dim,
-                    char_rnn_dim=char_rnn_dim,
-                    char_rnn_layers=char_rnn_layers,
-                    vocab_size=len(word_map),
-                    lm_vocab_size=lm_vocab_size,
-                    word_emb_dim=word_emb_dim,
-                    word_rnn_dim=word_rnn_dim,
-                    word_rnn_layers=word_rnn_layers,
-                    dropout=dropout,
-                    highway_layers=highway_layers).to(device)
-model.init_word_embeddings(embeddings.to(device))  # initialize embedding layer with pre-trained embeddings
-model.fine_tune_word_embeddings(fine_tune_word_embeddings)  # fine-tune
-optimizer = optim.SGD(params=filter(lambda p: p.requires_grad, model.parameters()), lr=lr, momentum=momentum)
-
-# Loss functions
-lm_criterion = nn.CrossEntropyLoss().to(device)
-crf_criterion = ViterbiLoss(tag_map).to(device)
-
-# Since the language model's vocab is restricted to in-corpus indices, encode training/val with only these!
-# word_map might have been expanded, and in-corpus words eliminated due to low frequency might still be added because
-# they were in the pre-trained embeddings
-temp_word_map = {k: v for k, v in word_map.items() if v <= word_map['<unk>']}
-train_inputs = create_input_tensors(train_set.tokens, train_set.labels, temp_word_map, char_map,
-                                    tag_map)
-val_inputs = create_input_tensors(test_set.tokens, test_set.labels, temp_word_map, char_map, tag_map)
-
-# DataLoaders
-train_loader = torch.utils.data.DataLoader(WCDataset(*train_inputs), batch_size=batch_size, shuffle=True,
-                                           num_workers=workers, pin_memory=False)
-val_loader = torch.utils.data.DataLoader(WCDataset(*val_inputs), batch_size=batch_size, shuffle=False,
-                                         num_workers=workers, pin_memory=False)
-
-# Viterbi decoder (to find accuracy during validation)
-vb_decoder = ViterbiDecoder(tag_map)
-
-word_reflect_map = {v:k for k,v in word_map.items()}
-tag_to_cat = {v:k for k, v in tag_map.items()}
-
-print(f"{model_name} starts: ")
-for epoch in range(start_epoch, epochs):
-
-    # One epoch's training
-    train(train_loader=train_loader,
-          model=model,
-          lm_criterion=lm_criterion,
-          crf_criterion=crf_criterion,
-          optimizer=optimizer,
-          epoch=epoch,
-          vb_decoder=vb_decoder)
-
-    # One epoch's validation
-    val_f1, _, _, _, _ = validate(val_loader=val_loader,
-                                  model=model,
-                                  crf_criterion=crf_criterion,
-                                  vb_decoder=vb_decoder,
-                                 ispredicting=True)
-
-    # Did validation F1 score improve?
-    is_best = val_f1 > best_f1
-    best_f1 = max(val_f1, best_f1)
-    if not is_best:
-        epochs_since_improvement += 1
-        print("\nEpochs since improvement: %d\n" % (epochs_since_improvement,))
-    else:
-        epochs_since_improvement = 0
-        
-    # Decay learning rate every epoch
-    adjust_learning_rate(optimizer, lr / (1 + (epoch + 1) * lr_decay))
-    
-tag_to_cat = {v:k for k, v in tag_map.items()}
-_, Preds, Preds_cats, Lbs, Lbs_cats = validate(val_loader=val_loader, 
-                                               model=model,
-                                               crf_criterion=crf_criterion,
-                                               vb_decoder=vb_decoder)
-
-pred_lable_keywords = {}
-pred_lable_keywords['predicitons'] = Preds
-pred_lable_keywords['preds_cats'] = Preds_cats
-pred_lable_keywords['labels'] = Lbs
-pred_lable_keywords['labels_cats'] = Lbs_cats
-
-with open(f"./{model_name}-label-pred-keywords-{trainingSession}.pkl", "wb") as f:
-    pickle.dump(pred_lable_keywords, f)
-
-torch.save(model, f"./{model_name}-model-{trainingSession}.pt")
-
-del model
+BiLSTM_CRF_processing()
