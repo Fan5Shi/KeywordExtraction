@@ -9,19 +9,9 @@
 !pip install -U spacy
 '''
 import re
-import os
-import sys
-import ast
-import time
-import codecs
 import pickle
-import itertools
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-
-from collections import Counter
-from functools import reduce
 import tqdm
 
 import warnings  
@@ -37,37 +27,7 @@ nltk.download('punkt')
 stops = set(stopwords.words('english'))
 
 import torch
-import torchtext
-import torch.nn as nn
-import torch.nn.init
-import torch.optim as optim
-import torch.nn.functional as F
-from torch.utils.data import Dataset, DataLoader
-from torch.nn.utils.rnn import pad_sequence
-from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
-
-import scipy.stats
-from sklearn.model_selection import train_test_split
-from sklearn.model_selection import cross_val_predict, cross_val_score
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report, make_scorer
-from sklearn.model_selection import RandomizedSearchCV
-from sklearn.metrics import accuracy_score, f1_score
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
-
-import openpyxl
-import pycrfsuite
-
-from transformers import BertTokenizerFast, BertConfig, BertForTokenClassification
-from transformers import RobertaForTokenClassification, RobertaTokenizerFast
-from transformers import AlbertForTokenClassification, AlbertTokenizerFast
-
-from sentence_transformers import SentenceTransformer
-
-import torch
 from transformers import BertTokenizer, BertModel
-import logging
-import matplotlib.pyplot as plt
 from scipy.spatial.distance import cosine
 
 from torch import cuda
@@ -85,29 +45,18 @@ from tkinter import Text
 from spacy.lang.en import English
 from spacy.matcher import PhraseMatcher
 import copy
-# nlp = spacy.load("en_core_web_sm")
-# nlp.add_pipe("sentencizer")
+nlp = spacy.load("en_core_web_sm")
+nlp.add_pipe("sentencizer")
 
-# tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 
-# model = BertModel.from_pretrained('bert-base-uncased',
-#                                 output_hidden_states = True, # Whether the model returns all hidden-states.
-#                                 )
-# model.eval()
-# model.to(device)
+model = BertModel.from_pretrained('bert-base-uncased',
+                                output_hidden_states = True, # Whether the model returns all hidden-states.
+                                )
+model.eval()
+model.to(device)
 
-tag_dict = {}
-tag_dict['Sustainability preoccupations'] = 'I-sus'
-tag_dict['Digital transformation'] = 'I-dig'
-tag_dict['Change in management'] = 'I-mag'
-tag_dict['Innovation activities'] = 'I-inn'
-tag_dict['Business Model'] = 'I-bus'
-tag_dict['Corporate social responsibility ou CSR'] = 'I-cor'
-# tag_dict['marco-label'] = 'I-mar'
-tag2cat = {v: k for k, v in tag_dict.items()}
-
-labels_to_ids2 = {'O':0, 'I-sus':1, 'I-dig':2, 'I-mag':3, 'I-inn':4, 'I-bus':5, 'I-cor':6}
-ids_to_labels2 = {v: k for k, v in labels_to_ids2.items()}
+from label2id import *
 
 """
 This is the class to read dataset
