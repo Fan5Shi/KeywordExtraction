@@ -3,7 +3,7 @@ import pandas as pd
 import pickle
 import time
 from label2id import *
-##from model_training import *
+###from model_training import *
 
 from sklearn.metrics import accuracy_score
 
