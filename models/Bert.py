@@ -3,7 +3,7 @@ import pandas as pd
 import pickle
 import time
 from label2id import *
-from model_training import *
+##from model_training import *
 
 from sklearn.metrics import accuracy_score
 
@@ -23,8 +23,6 @@ import torch.nn.init
 import torch.optim as optim
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
-from torch.nn.utils.rnn import pad_sequence
-from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 
 from transformers import BertTokenizerFast, BertConfig, BertForTokenClassification
 from transformers import RobertaForTokenClassification, RobertaTokenizerFast
@@ -47,8 +45,12 @@ class dataset2(Dataset):
 
     def __getitem__(self, index):
         # step 1: get the sentence and word labels 
-        sentence = self.data.sentence[index].strip().split()  
-        word_labels = self.data.word_labels[index].split(",") 
+
+        #print(40*'*')
+        #print(self.data.sentence.iloc[index])
+        #print(40*'*')
+        sentence = self.data.sentence.iloc[index].strip().split()  
+        word_labels = self.data.word_labels.iloc[index].split(",") 
 
         # step 2: use tokenizer to encode sentence (includes padding/truncation up to max length)
         # BertTokenizerFast provides a handy "return_offsets_mapping" functionality for individual tokens
@@ -346,35 +348,38 @@ def countKeywords(test_dataset, model):
         
     return Preds, Preds_cats, Lbs, Lbs_cats
 
-MAX_LEN = 300
-TRAIN_BATCH_SIZE = 4
-VALID_BATCH_SIZE = 2
-EPOCHS = 8
-LEARNING_RATE = 1e-05
-MAX_GRAD_NORM = 10
+if __name__ == '__main__':
+    MAX_LEN = 300
+    TRAIN_BATCH_SIZE = 4
+    VALID_BATCH_SIZE = 2
+    EPOCHS = 1
+    LEARNING_RATE = 1e-05
+    MAX_GRAD_NORM = 10
 
-directory_file = '/workspaces/KeywordExtraction/'
-data_file = directory_file + 'data/finalData/'
-save_file = directory_file + 'models/results/'
+    directory_file = '/Users/revekkakyriakoglou/Documents/paris_8/Projects/KeywordExtraction/'
+    data_file = directory_file + 'data/finalData/'
+    save_file = directory_file + 'models/results/'
 
-for trainingSession in range(1, 5):
 
-    with open(data_file + f"trainset-{trainingSession}.pkl", "rb") as f:
-        train_set = pickle.load(f)
-    with open(data_file + f"testset-{trainingSession}.pkl", "rb") as f:
-        test_set = pickle.load(f)
 
-    models_name = ['Bert-base-cased', 'Roberta']
-    for model_name in models_name:
-        print(model_name)
-        if model_name == 'Bert-base-cased':
-            tokenizer = BertTokenizerFast.from_pretrained('bert-base-cased')
-            model = BertForTokenClassification.from_pretrained('bert-base-cased', num_labels=len(labels_to_ids2))
-        if model_name == 'Albert':
-            tokenizer = BertTokenizerFast.from_pretrained('bert-base-cased')
-            model = AlbertForTokenClassification.from_pretrained('albert-base-v1', num_labels=len(labels_to_ids2))
-        if model_name == 'Roberta':
-            tokenizer = RobertaTokenizerFast.from_pretrained('roberta-base', add_prefix_space=True)
-            model = RobertaForTokenClassification.from_pretrained('roberta-base', num_labels=len(labels_to_ids2))
+    for trainingSession in range(1, 5):
 
-        bert_processing(train_set, test_set, trainingSession)
+        with open(data_file + f"trainset-{trainingSession}.pkl", "rb") as f:
+            train_set = pickle.load(f)
+        with open(data_file + f"testset-{trainingSession}.pkl", "rb") as f:
+            test_set = pickle.load(f)
+
+        models_name = ['Bert-base-cased', 'Roberta']
+        for model_name in models_name:
+            print(model_name)
+            if model_name == 'Bert-base-cased':
+                tokenizer = BertTokenizerFast.from_pretrained('bert-base-cased')
+                model = BertForTokenClassification.from_pretrained('bert-base-cased', num_labels=len(labels_to_ids2))
+            if model_name == 'Albert':
+                tokenizer = BertTokenizerFast.from_pretrained('bert-base-cased')
+                model = AlbertForTokenClassification.from_pretrained('albert-base-v1', num_labels=len(labels_to_ids2))
+            if model_name == 'Roberta':
+                tokenizer = RobertaTokenizerFast.from_pretrained('roberta-base', add_prefix_space=True)
+                model = RobertaForTokenClassification.from_pretrained('roberta-base', num_labels=len(labels_to_ids2))
+
+            bert_processing(train_set, test_set, trainingSession)

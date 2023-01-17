@@ -1,3 +1,5 @@
+# !pip install eli5
+# !pip install allennlp
 import numpy as np
 import pandas as pd
 import pickle
@@ -7,7 +9,7 @@ from collections import Counter
 from functools import reduce
 
 from label2id import *
-from model_training import *
+# from model_training import *
 
 from sklearn.metrics import accuracy_score
 
@@ -29,7 +31,6 @@ import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 from torch.nn.utils.rnn import pad_sequence
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
-
 import scipy.stats
 import eli5
 from sklearn.model_selection import train_test_split
@@ -825,7 +826,7 @@ class WCDataset(Dataset):
         return self.data_size
 
 
-def train(train_loader, model, lm_criterion, crf_criterion, optimizer, epoch, vb_decoder):
+def train(train_loader, model, lm_criterion, crf_criterion, optimizer, epoch, vb_decoder, word_map, tag_map):
     """
     Performs one epoch's training.
 
@@ -865,14 +866,15 @@ def train(train_loader, model, lm_criterion, crf_criterion, optimizer, epoch, vb
         cmap_lengths = cmap_lengths.to(device)
         
         # Forward prop.
-        crf_scores, lm_f_scores, lm_b_scores, wmaps_sorted, tmaps_sorted, wmap_lengths_sorted, _, __ = model(cmaps_f,
-                                                                                                             cmaps_b,
-                                                                                                             cmarkers_f,
-                                                                                                             cmarkers_b,
-                                                                                                             wmaps,
-                                                                                                             tmaps,
-                                                                                                             wmap_lengths,
-                                                                                                             cmap_lengths)
+        crf_scores, lm_f_scores, lm_b_scores, wmaps_sorted, tmaps_sorted, wmap_lengths_sorted, _, __ = model(
+            cmaps_f,
+            cmaps_b,
+            cmarkers_f,
+            cmarkers_b,
+            wmaps,
+            tmaps,
+            wmap_lengths, 
+            cmap_lengths)
 
         # LM loss
 
@@ -951,7 +953,7 @@ def train(train_loader, model, lm_criterion, crf_criterion, optimizer, epoch, vb
           f'F1 {f1s.val:.3f} ({f1s.avg:.3f})')
 
 
-def validate(val_loader, model, crf_criterion, vb_decoder, ispredicting=False):
+def validate(val_loader, model, crf_criterion, vb_decoder, word_reflect_map, tag_to_cat, tag_map, ispredicting=False):
     """
     Performs one epoch's validation.
 
@@ -1115,8 +1117,80 @@ def tags_to_keywords(sample, words):
     return list(set(keywords)), key_cats
 
 
-def BiLSTM_CRF_processing():
+# NEW ONE newly generated words
+def lengthOfTokens(pair):
+        return len(pair.split())
 
+def tags_to_keywords(sample, words):
+    indices = [i for i, l in enumerate(sample) if l != 'O']
+    keywords, key_cats = [], []
+    for j, id in enumerate(indices):
+        if j == 0:
+            start = end = id
+            continue
+        if j == len(indices):
+            pos = pos_tag(words[start:end+1])
+            if (pos[-1][1] == 'NN' or pos[-1][1] == 'NNS' or pos[-1][1] == 'NNP' or pos[-1][1] == 'NNPS') and pos[0][1] != 'CC':
+                keywords.append(' '.join(words[start:end+1]))
+                key_cats.append((' '.join(words[start:end+1]), sample[start:end+1]))
+            continue
+        if end+1 == id:
+            end = id
+        else:
+            pos = pos_tag(words[start:end+1])
+            if (pos[-1][1] == 'NN' or pos[-1][1] == 'NNS' or pos[-1][1] == 'NNP' or pos[-1][1] == 'NNPS') and pos[0][1] != 'CC':
+                keywords.append(' '.join(words[start:end+1]))
+                key_cats.append((' '.join(words[start:end+1]), sample[start:end+1]))
+            start = end = id
+    return list(set(keywords)), key_cats
+
+directory_file = '/workspaces/KeywordExtraction/'
+data_file = directory_file + 'data/finalData/'
+save_file = directory_file + 'models/results/'
+
+emb_file = directory_file + 'originalData/glove.6B.100d.txt'
+
+model_name = 'BiLSTM-CRF'
+min_word_freq = 3  # threshold for word frequency
+min_char_freq = 1  # threshold for character frequency
+caseless = True  # lowercase everything?
+expand_vocab = True  # expand model's input vocabulary to the pre-trained embeddings' vocabulary?
+
+# Model parameters
+char_emb_dim = 30  # character embedding size
+with open(emb_file, 'r') as f:
+    word_emb_dim = len(f.readline().split(' ')) - 1  # word embedding size
+word_rnn_dim = 300  # word RNN size
+char_rnn_dim = 300  # character RNN size
+char_rnn_layers = 1  # number of layers in character RNN
+word_rnn_layers = 1  # number of layers in word RNN
+highway_layers = 1  # number of layers in highway network
+dropout = 0.5  # dropout
+fine_tune_word_embeddings = False  # fine-tune pre-trained word embeddings?
+
+# Training parameters
+start_epoch = 0  # start at this epoch
+batch_size = 32  # batch size
+lr = 0.015  # learning rate
+lr_decay = 0.05  # decay learning rate by this amount
+momentum = 0.9  # momentum
+workers = 1  # number of workers for loading data in the DataLoader
+epochs = 12  # number of epochs to run without early-stopping
+grad_clip = 5.  # clip gradients at this value
+print_freq = 100  # print training or validation status every __ batches
+best_f1 = 0.  # F1 score to start with
+checkpoint = None  # path to model checkpoint, None if none
+
+for trainingSession in range(1, 5):
+
+    with open(data_file + f"trainset-{trainingSession}.pkl", "rb") as f:
+        train_set = pickle.load(f)
+    with open(data_file + f"testset-{trainingSession}.pkl", "rb") as f:
+        test_set = pickle.load(f)
+
+    train_set = train_set[:1000]
+    test_set = test_set[:1000]
+        
     def tokenize_example(example, max_length=300):
         return example.split(' ')[:max_length]
 
@@ -1184,14 +1258,19 @@ def BiLSTM_CRF_processing():
             crf_criterion=crf_criterion,
             optimizer=optimizer,
             epoch=epoch,
-            vb_decoder=vb_decoder)
+            vb_decoder=vb_decoder,
+            word_map=word_map,
+            tag_map=tag_map)
 
         # One epoch's validation
         val_f1, _, _, _, _ = validate(val_loader=val_loader,
                                     model=model,
                                     crf_criterion=crf_criterion,
                                     vb_decoder=vb_decoder,
-                                    ispredicting=True)
+                                    ispredicting=True,
+                                    word_reflect_map=word_reflect_map,
+                                    tag_to_cat=tag_to_cat,
+                                    tag_map=tag_map)
 
         # Did validation F1 score improve?
         is_best = val_f1 > best_f1
@@ -1201,15 +1280,18 @@ def BiLSTM_CRF_processing():
             print("\nEpochs since improvement: %d\n" % (epochs_since_improvement,))
         else:
             epochs_since_improvement = 0
-            
+
         # Decay learning rate every epoch
         adjust_learning_rate(optimizer, lr / (1 + (epoch + 1) * lr_decay))
-        
+
     tag_to_cat = {v:k for k, v in tag_map.items()}
     _, Preds, Preds_cats, Lbs, Lbs_cats = validate(val_loader=val_loader, 
                                                 model=model,
                                                 crf_criterion=crf_criterion,
-                                                vb_decoder=vb_decoder)
+                                                vb_decoder=vb_decoder,
+                                                word_reflect_map=word_reflect_map,
+                                                tag_to_cat=tag_to_cat,
+                                                tag_map=tag_map)
 
     pred_lable_keywords = {}
     pred_lable_keywords['predicitons'] = Preds
@@ -1217,120 +1299,7 @@ def BiLSTM_CRF_processing():
     pred_lable_keywords['labels'] = Lbs
     pred_lable_keywords['labels_cats'] = Lbs_cats
 
-    with open(f"./{model_name}-label-pred-keywords-{trainingSession}.pkl", "wb") as f:
+    with open(save_file + f"./{model_name}-label-pred-keywords-{trainingSession}.pkl", "wb") as f:
         pickle.dump(pred_lable_keywords, f)
 
-    torch.save(model, f"./{model_name}-model-{trainingSession}.pt")
-
-    del model
-
-# NEW ONE newly generated words
-def lengthOfTokens(pair):
-        return len(pair.split())
-
-def tags_to_keywords(sample, words):
-    indices = [i for i, l in enumerate(sample) if l != 'O']
-    keywords, key_cats = [], []
-    for j, id in enumerate(indices):
-        if j == 0:
-            start = end = id
-            continue
-        if j == len(indices):
-            pos = pos_tag(words[start:end+1])
-            if (pos[-1][1] == 'NN' or pos[-1][1] == 'NNS' or pos[-1][1] == 'NNP' or pos[-1][1] == 'NNPS') and pos[0][1] != 'CC':
-                keywords.append(' '.join(words[start:end+1]))
-                key_cats.append((' '.join(words[start:end+1]), sample[start:end+1]))
-            continue
-        if end+1 == id:
-            end = id
-        else:
-            pos = pos_tag(words[start:end+1])
-            if (pos[-1][1] == 'NN' or pos[-1][1] == 'NNS' or pos[-1][1] == 'NNP' or pos[-1][1] == 'NNPS') and pos[0][1] != 'CC':
-                keywords.append(' '.join(words[start:end+1]))
-                key_cats.append((' '.join(words[start:end+1]), sample[start:end+1]))
-            start = end = id
-    return list(set(keywords)), key_cats
-
-def countKeywords(test_dataset, model):
-    kws_pairs = []
-    Preds, Preds_cats, Lbs, Lbs_cats = [], [], [], []
-    for tmp_num in range(len(test_dataset)):
-        sentence = test_dataset["sentence"].iloc[tmp_num]
-
-        inputs = tokenizer(sentence.split(),
-                            is_split_into_words=True, 
-                            return_offsets_mapping=True, 
-                            padding='max_length', 
-                            truncation=True, 
-                            max_length=MAX_LEN,
-                            return_tensors="pt")
-
-        # move to gpu
-        ids = inputs["input_ids"].to(device)
-        mask = inputs["attention_mask"].to(device)
-        # forward pass
-        outputs = model(ids, attention_mask=mask)
-        logits = outputs.logits
-
-        active_logits = logits.view(-1, model.num_labels) # shape (batch_size * seq_len, num_labels)
-        flattened_predictions = torch.argmax(active_logits, axis=1) # shape (batch_size*seq_len,) - predictions at the token level
-
-        tokens = tokenizer.convert_ids_to_tokens(ids.squeeze().tolist())
-        token_predictions = [ids_to_labels2[i] for i in flattened_predictions.cpu().numpy()]
-        wp_preds = list(zip(tokens, token_predictions)) # list of tuples. Each tuple = (wordpiece, prediction)
-
-        prediction = []
-        for token_pred, mapping in zip(wp_preds, inputs["offset_mapping"].squeeze().tolist()):
-          #only predictions on first word pieces are important
-          if mapping[0] == 0 and mapping[1] != 0:
-            prediction.append(token_pred[1])
-          else:
-            continue
-        
-        # predictions
-        preds, preds_cats = tags_to_keywords(prediction, sentence.split())
-        lbs, lbs_cats = tags_to_keywords(test_dataset["word_labels"].iloc[tmp_num].split(','), sentence.split())
-
-        Preds.append(preds)
-        Preds_cats.append(preds_cats)
-        Lbs.append(lbs)
-        Lbs_cats.append(lbs_cats)
-        
-    return Preds, Preds_cats, Lbs, Lbs_cats
-
-# trainingSession = 1
-model_name = 'BiLSTM-CRF'
-emb_file = '../input/glove6b100dtxt/glove.6B.100d.txt'
-min_word_freq = 3  # threshold for word frequency
-min_char_freq = 1  # threshold for character frequency
-caseless = True  # lowercase everything?
-expand_vocab = True  # expand model's input vocabulary to the pre-trained embeddings' vocabulary?
-
-# Model parameters
-char_emb_dim = 30  # character embedding size
-with open(emb_file, 'r') as f:
-    word_emb_dim = len(f.readline().split(' ')) - 1  # word embedding size
-word_rnn_dim = 300  # word RNN size
-char_rnn_dim = 300  # character RNN size
-char_rnn_layers = 1  # number of layers in character RNN
-word_rnn_layers = 1  # number of layers in word RNN
-highway_layers = 1  # number of layers in highway network
-dropout = 0.5  # dropout
-fine_tune_word_embeddings = False  # fine-tune pre-trained word embeddings?
-
-# Training parameters
-start_epoch = 0  # start at this epoch
-batch_size = 32  # batch size
-lr = 0.015  # learning rate
-lr_decay = 0.05  # decay learning rate by this amount
-momentum = 0.9  # momentum
-workers = 1  # number of workers for loading data in the DataLoader
-epochs = 12  # number of epochs to run without early-stopping
-grad_clip = 5.  # clip gradients at this value
-print_freq = 100  # print training or validation status every __ batches
-best_f1 = 0.  # F1 score to start with
-checkpoint = None  # path to model checkpoint, None if none
-
-
-
-BiLSTM_CRF_processing()
+    torch.save(model, save_file + f"./{model_name}-model-{trainingSession}.pt")
