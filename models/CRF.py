@@ -1,3 +1,31 @@
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import torchtext
+import time
+import pandas as pd
+from label2id import *
+import pickle
+
+import pycrfsuite
+
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk import pos_tag
+nltk.download('stopwords')
+nltk.download('averaged_perceptron_tagger')
+nltk.download('punkt')
+stops = set(stopwords.words('english'))
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print(device)
+
+seed = 0
+torch.manual_seed(seed)
+
+
 def datasetForClassification(data2):
     Index, SentNum, Word, POS, Tag = [],[],[],[],[]
     for i in range(len(data2)):
@@ -102,60 +130,81 @@ def tags_to_keywords_crf(sample, words):
             start = end = id
     return list(set(keywords)), key_cats
 
+directory_file = '/Users/revekkakyriakoglou/Documents/paris_8/Projects/KeywordExtraction/'
+data_file = directory_file + 'data/finalData/'
+save_file = directory_file + 'models/results/'
+
 model_name = "CRF"
 
-train_ml = datasetForClassification(train_set)
-del train_set
-test_ml = datasetForClassification(test_set)
-del test_set
+def tokenize_example(example, max_length=300):
+    return example.split(' ')[:max_length]
 
-train_getter = getsentence(train_ml)
-test_getter = getsentence(test_ml)
-train_sentences = train_getter.sentences
-test_sentences = test_getter.sentences
+def split_tags(example, max_length=300):
+    return example.split(',')[:max_length]
 
-X_train = [sent2features(s) for s in train_sentences]
-y_train = [sent2labels(s) for s in train_sentences]
-X_test = [sent2features(s) for s in test_sentences]
-y_test = [sent2labels(s) for s in test_sentences]
+for trainingSession in range(1, 5):
 
-trainer = pycrfsuite.Trainer(verbose=False)
-for xseq, yseq in zip(X_train, y_train):
-    trainer.append(xseq, yseq)
+    with open(data_file + f"trainset-{trainingSession}.pkl", "rb") as f:
+        train_set = pickle.load(f)
+    with open(data_file + f"testset-{trainingSession}.pkl", "rb") as f:
+        test_set = pickle.load(f)
+
+    train_set['tokens'] = train_set['sentence'].map(tokenize_example)
+    train_set['labels'] = train_set['word_labels'].map(split_tags)
+    test_set['tokens'] = test_set['sentence'].map(tokenize_example)
+    test_set['labels'] = test_set['word_labels'].map(split_tags)
+
+    train_ml = datasetForClassification(train_set)
+    test_ml = datasetForClassification(test_set)
+
+    train_getter = getsentence(train_ml)
+    test_getter = getsentence(test_ml)
+    train_sentences = train_getter.sentences
+    test_sentences = test_getter.sentences
+
+    X_train = [sent2features(s) for s in train_sentences]
+    y_train = [sent2labels(s) for s in train_sentences]
+    X_test = [sent2features(s) for s in test_sentences]
+    y_test = [sent2labels(s) for s in test_sentences]
+
+    trainer = pycrfsuite.Trainer(verbose=False)
+    for xseq, yseq in zip(X_train, y_train):
+        trainer.append(xseq, yseq)
     
-trainer.set_params({
-    'c1': 1.0,   # coefficient for L1 penalty
-    'c2': 1e-3,  # coefficient for L2 penalty
-    'max_iterations': 50,  # stop earlier
+    trainer.set_params({
+        'c1': 1.0,   # coefficient for L1 penalty
+        'c2': 1e-3,  # coefficient for L2 penalty
+        'max_iterations': 50,  # stop earlier
 
-    # include transitions that are possible, but not observed
-    'feature.possible_transitions': True
-})
+        # include transitions that are possible, but not observed
+        'feature.possible_transitions': True
+    })
 
-print(f"{model_name} start:")
-trainer.train('conll2002-esp.crfsuite')
-tagger = pycrfsuite.Tagger()
-tagger.open('conll2002-esp.crfsuite')
+    print(f"{model_name} start:")
+    trainer.train(save_file + 'conll2002-esp.crfsuite')
+    tagger = pycrfsuite.Tagger()
+    tagger.open(save_file + 'conll2002-esp.crfsuite')
 
-y_pred = [tagger.tag(xseq) for xseq in X_test]
+    y_pred = [tagger.tag(xseq) for xseq in X_test]  
 
-Preds, Preds_cats, Lbs, Lbs_cats = [], [], [], []
-for n, pred in enumerate(y_pred):
-    sentence = X_test[n]
-    preds, preds_cats = tags_to_keywords_crf(pred, sentence)
-    lbs, lbs_cats = tags_to_keywords_crf(y_test[n], sentence)
+    print("Predicting...")
+    Preds, Preds_cats, Lbs, Lbs_cats = [], [], [], []
+    for n, pred in enumerate(y_pred):
+        sentence = X_test[n]
+        preds, preds_cats = tags_to_keywords_crf(pred, sentence)
+        lbs, lbs_cats = tags_to_keywords_crf(y_test[n], sentence)
 
-    Preds.append(preds)
-    Preds_cats.append(preds_cats)
-    Lbs.append(lbs)
-    Lbs_cats.append(lbs_cats)
-    
-print("---------")
-pred_lable_keywords = {}
-pred_lable_keywords['predicitons'] = Preds
-pred_lable_keywords['preds_cats'] = Preds_cats
-pred_lable_keywords['labels'] = Lbs
-pred_lable_keywords['labels_cats'] = Lbs_cats
+        Preds.append(preds)
+        Preds_cats.append(preds_cats)
+        Lbs.append(lbs)
+        Lbs_cats.append(lbs_cats)
+        
+    pred_lable_keywords = {}
+    pred_lable_keywords['predicitons'] = Preds
+    pred_lable_keywords['preds_cats'] = Preds_cats
+    pred_lable_keywords['labels'] = Lbs
+    pred_lable_keywords['labels_cats'] = Lbs_cats
 
-with open(f"./{model_name}-label-pred-keywords-{trainingSession}.pkl", "wb") as f:
-    pickle.dump(pred_lable_keywords, f)
+    print("Storing the model ...")
+    with open(save_file + f"./{model_name}-label-pred-keywords-{trainingSession}.pkl", "wb") as f:
+        pickle.dump(pred_lable_keywords, f)
