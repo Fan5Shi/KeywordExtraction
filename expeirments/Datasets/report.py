@@ -1,7 +1,43 @@
 import ast
+import pickle
+import pandas as pd
+import numpy as np
 
-def get_canonical_labels(labeled_set):
-    cortext3 = open("/content/drive/MyDrive/COURSE/Intern/Cortext3_min_delac_flex_utf8.txt", "r")
+from sklearn.metrics.pairwise import cosine_similarity
+
+def intersection(lst1, lst2):
+    lst3 = [value for value in lst1 if value in lst2]
+    return lst3
+
+def get_recall(Labels, Predictions, ignore=True):
+    recalls = []
+    for i, lbs in enumerate(Labels):
+        preds = Predictions[i]
+        if not lbs:
+            if not ignore:
+                recalls.append(1.0 if not preds else 0.0)
+            continue
+        recalls.append(len(intersection(preds, lbs)) / len(lbs))
+    return np.mean(recalls)
+
+def get_precision(Labels, Predictions, ignore=True):
+    precisions = []
+    for i, preds in enumerate(Predictions):
+        lbs = Labels[i]
+        if not preds:
+            if not ignore:
+                precisions.append(1.0 if not preds else 0.0)
+            continue
+        precisions.append(len(intersection(preds, lbs)) / len(preds))
+    return np.mean(precisions)
+
+def get_f1score(Labels, Predictions, ignore=True):
+    precision = get_precision(Labels, Predictions, ignore)
+    recall = get_recall(Labels, Predictions, ignore)
+    return 2 * precision * recall / (precision + recall)
+
+def get_canonical_labels(labeled_set, cortext_file='Cortext3_min_delac_flex_utf8.txt'):
+    cortext3 = open(cortext_dir+cortext_file, "r")
     lines = cortext3.readlines()
     lefts, rights = [], []
     for line in lines:
@@ -92,9 +128,9 @@ def get_new_terms_amount(file_path, trainingSession, withTag=True):
         train_set = pickle.load(f)
     with open(f"{data_path}/testset-{trainingSession}.pkl", "rb") as f:
         test_set = pickle.load(f)
-    train_terms = set([kw for kws in train_set['keywords_0.1'].values.tolist() for kw in kws])
+    train_terms = set([kw for kws in train_set['keywords'].values.tolist() for kw in kws])
     # test_terms = set([kw for kws in test_set['keywords_0.1'].values.tolist() for kw in kws])
-    Train_terms, Test_terms, Same_terms, Diff_terms, Pred_terms, Pred_New_terms, New_terms = [],[],[],[],[],[],[]
+    Num_train_terms, Num_test_terms, Num_same_terms, Num_diff_terms, Num_Pred_terms, Num_pred_New_terms, Num_new_terms, New_terms = [],[],[],[],[],[],[],[]
     for model_name in models_name:
         if withTag:
             with open(f"{file_path}/{model_name}-label-pred-keywords-{trainingSession}.pkl", "rb") as f:
@@ -110,15 +146,15 @@ def get_new_terms_amount(file_path, trainingSession, withTag=True):
         print(f"Session: {trainingSession} {model_name} {len(set([lb for label in labels for lb in label]))}")
         pred_terms = set([pr for pred in predictions for pr in pred])
         
-        Train_terms.append(len(get_canonical_labels(train_terms)))
-        Test_terms.append(len(get_canonical_labels(test_terms)))
-        Same_terms.append(len(get_canonical_labels(train_terms).intersection(get_canonical_labels(test_terms))))
-        Diff_terms.append(len(get_canonical_labels(test_terms).difference(get_canonical_labels(train_terms))))
-        Pred_terms.append(len(get_canonical_labels(pred_terms)))
-        Pred_New_terms.append(len(get_canonical_labels(pred_terms).intersection(get_canonical_labels(test_terms).difference(get_canonical_labels(train_terms)))))
-        New_terms.append(len(pred_terms.difference(test_terms)))
+        Num_train_terms.append(len(get_canonical_labels(train_terms)))
+        Num_test_terms.append(len(get_canonical_labels(test_terms)))
+        Num_same_terms.append(len(get_canonical_labels(train_terms).intersection(get_canonical_labels(test_terms))))
+        Num_diff_terms.append(len(get_canonical_labels(test_terms).difference(get_canonical_labels(train_terms))))
+        Num_Pred_terms.append(len(get_canonical_labels(pred_terms)))
+        Num_pred_New_terms.append(len(get_canonical_labels(pred_terms).intersection(get_canonical_labels(test_terms).difference(get_canonical_labels(train_terms)))))
+        Num_new_terms.append(len(pred_terms.difference(test_terms)))
     
-    return Train_terms, Test_terms, Same_terms, Diff_terms, Pred_terms, Pred_New_terms, New_terms
+    return Num_train_terms, Num_test_terms, Num_same_terms, Num_diff_terms, Num_Pred_terms, Num_pred_New_terms, Num_new_terms, New_terms
 
 def get_new_words_ratio(file_path, trainingSession, withTag=True):
     newWordsRatios = []
@@ -260,30 +296,43 @@ def newPredsCounter(models_name):
                 counter.append(pred[1])
     return Counter(counter)
 
-models_name = ['Bert-base-cased', 'Albert', 'Roberta', 'BiLSTM-CRF', 'CNN-CRF', 'CRF']
+models_name = ['Bert-base-cased', 'Roberta', 'BiLSTM-CRF', 'CNN-CRF', 'CRF']
 
 directory_file = '/Users/revekkakyriakoglou/Documents/paris_8/Projects/KeywordExtraction/'
 data_file = directory_file + 'data/finalData/'
 save_file = directory_file + 'models/results/'
+cortext_dir = directory_file + 'data/originalData/'
 
-file_path = "/content/drive/MyDrive/COURSE/Intern/Final_Experiments_13_09/Method "
 data_path = "/content/drive/MyDrive/COURSE/Intern/Final_Experiments_13_09/All Datasets"
-# model = SentenceTransformer('distilbert-base-nli-mean-tokens')
+model = SentenceTransformer('distilbert-base-nli-mean-tokens')
+
+with open(directory_file + "data/intermediateData/0113_enriched_cat_web.pkl", "rb") as f:
+    enrich_webset = pickle.load(f)
+with open(directory_file + "data/intermediateData/0113_enriched_cat_ap.pkl", "rb") as f:
+    enrich_apset = pickle.load(f)
+
+gold_dict = enrich_webset | enrich_apset
 
 for trainingSession in range(1,5):
     print(f"{trainingSession}:")
-    recalls, precisions, f1scores = get_report(file_path+str(trainingSession), trainingSession, False)
+    recalls, precisions, f1scores = get_report(save_file, trainingSession, False)
+
+    print(pd.DataFrame({"Model": models_name, "Recall": recalls, "Precision": precisions, "F1score": f1scores}).set_index("Model"))
+
+for trainingSession in range(1,5):
     # newWordsRatios = get_new_words_ratio(file_path+str(trainingSession), trainingSession)
-    Train_terms, Test_terms, Same_terms, Diff_terms, Pred_terms, Pred_New_terms, New_terms = get_new_terms_amount(file_path+str(trainingSession), trainingSession, False)
-    pd.DataFrame({"Model": models_name, 
-                          "Recall": recalls, 
-                          "Precision": precisions, 
-                          "F1score": f1scores,
-                          "# Train Terms": Train_terms,
-                          '# Test Terms': Test_terms,
-                          '# Same Terms': Same_terms,
-                          '# Difference Terms (only in testing)': Diff_terms,
-                          '# Predictions': Pred_terms,
-                          '# New terms (in the expert dictionary)': Pred_New_terms,
-                          '# New terms (out of expert dictionary)': New_terms}).set_index("Model")
-    
+    Num_train_terms, Num_test_terms, Num_same_terms, Num_diff_terms, Num_Pred_terms, Num_pred_New_terms, Num_new_terms, New_terms = get_new_terms_amount(save_file, trainingSession, False)
+    print(pd.DataFrame({"Model": models_name,
+    "Recall": recalls,
+    "Precision": precisions,
+    "F1score": f1scores,
+    "# Train Terms": Num_train_terms,
+    '# Test Terms': Num_test_terms,
+    '# Same Terms': Num_same_terms,
+    '# Difference Terms (only in testing)': Num_diff_terms,
+    '# Predictions': Num_Pred_terms,
+    '# New terms (in the expert dictionary)': Num_pred_New_terms,
+    '# New terms (out of expert dictionary)': Num_new_terms}).set_index("Model"))
+
+
+
